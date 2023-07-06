@@ -84,16 +84,6 @@ function SideMenu() {
                 </Link>
             </li>
 
-
-            <li className="sidebar-item">
-                <Link className="sidebar-link" to="/class3formPage">
-                    <span>
-                    <i className="ti ti-layout-dashboard"></i>
-                    </span>
-                    <span className="hide-menu">Class 3 Formik</span>
-                </Link>
-            </li>
-
             <li className="sidebar-item">
                 <Link className="sidebar-link" to="/addcustomer">
                     <span>
