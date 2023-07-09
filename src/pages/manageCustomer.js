@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useState,useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
@@ -28,88 +29,7 @@ function ManageCustomer() {
 
   const ref=collection(firestore,"customer_master");
 
-    const customerData=[
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-        {
-            fullname: "Arunachalam",
-            phoneno: 989456789,
-            email: "abc@gmail.com",
-            address: "selvapuram",
-            city: "coimbatore",
-            state: "tamilnadu",
-        },
-    ];
+  const [customerList, setCustomerList] = useState();
 
     useEffect(()=>{
       getCustomer()
@@ -117,8 +37,8 @@ function ManageCustomer() {
 
     async function getCustomer() {
       const cusList=await getDocs(ref);
-      const customers = cusList.docs.map(doc => doc.data());
-      console.log(customers);
+      setCustomerList(cusList.docs.map(doc => doc.data()));
+      console.log(customerList);
     }
 
   return (
@@ -144,7 +64,7 @@ function ManageCustomer() {
                 </div>
             <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
               <button
-                class="btn btn-primary  mb-3 rounded-2"
+                className="btn btn-primary  mb-3 rounded-2"
                 type="button"
               >
                 Add Customer
@@ -166,9 +86,9 @@ function ManageCustomer() {
                   </tr>
                 </thead>
                 <tbody>
-                    {customerData.map(function (data) {
+                    {customerList?.map(function (data,index) {
                         return <>
-                        <tr>
+                        <tr key={data.index}>
                         <td>#cc001</td>
                         <td>{data.fullname}</td>
                         <td>{data.phoneno}</td>

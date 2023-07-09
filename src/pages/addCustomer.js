@@ -1,9 +1,72 @@
 import React from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
+import { useState,useEffect } from "react";
 import { Formik } from "formik";
+import axios from "axios";
+import { firestore } from "../config/firestore";
+import { addDoc, collection } from "@firebase/firestore";
+
 
 function AddCustomer() {
+  //function calling la doubts iruku! values,name,onchange la doubts iruku
+  const ref=collection(firestore,"customer_master");
+  const [formData,setFormData]=useState({
+    fullname: "",
+    phoneno: "",
+    email: "",
+    address: "",
+    country: "",
+    city: "",
+  });
+  const countryUrl = "https://countriesnow.space/api/v0.1/countries"; //country api link
+  const [countryList, setCountryList] = useState();
+  const [cityList,setCityList]=useState();
+
+
+  //useEffect is used for execute once to countryList state variable
+  useEffect(() => {
+    axios.get(countryUrl).then((response) => {
+      setCountryList(response.data.data);
+    });
+  }, []);
+
+
+  //this useEffect is for making our selecting countries, state to display 
+  useEffect(()=>{
+    countryList?.map (cList=>{
+        if(cList.country==formData.country){
+            setCityList(cList.cities);
+        }
+    
+    })
+  },[formData.country])
+
+
+  const handleChange=(e)=>{
+    const {name,value}=e.target;
+    setFormData((prevFormData)=>({
+      ...prevFormData,
+      [name]: value
+    }));
+    //console.log(formData);
+  }
+
+  const handleAddCustomer=()=>{
+    console.log('Submit button clicked');
+      try {
+        if(formData!="" && formData!=undefined){
+          console.log(formData);
+            addDoc(ref, {...formData}); //addDoc("tablename",)
+            alert("added successfully");
+        } else {
+            console.log("error");
+        }
+    } catch (err) {
+        console.log(err)
+    }
+  }
+
   return (
     <>
       <div
@@ -30,8 +93,8 @@ function AddCustomer() {
                     phoneno: "",
                     email: "",
                     address: "",
+                    country: "",
                     city: "",
-                    state: "",
                   }}
                   validate={(values) => {
                     const errors = {};
@@ -53,29 +116,26 @@ function AddCustomer() {
                     if (!values.address) {
                       errors.address = "Required";
                     }
-                    if (!values.city) {
+                    if (!values.country) {
                       errors.city = "Required";
                     }
-                    if (!values.state) {
+                    if (!values.city) {
                       errors.state = "Required";
                     }
                   }}
-                  onSubmit={(values, { setSubmitting }) => {
-                    alert(JSON.stringify(values));
-                    setSubmitting(false);
-                  }}
+                  // onSubmit={(values, { setSubmitting }) => {
+                  //   alert(JSON.stringify(values));
+                  //   setSubmitting(false);
+                  // }}
                 >
                   {({
                     values,
                     errors,
                     touched,
-                    handleChange,
                     handleBlur,
-                    handleSubmit,
-                    isSubmitting,
                   }) => {
                     return (
-                      <form onSubmit={handleSubmit}>
+                      <form>
                         <div className="container">
                           <div className="row">
                             <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
@@ -92,7 +152,7 @@ function AddCustomer() {
                                 name="fullname"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                value={values.fullname}
+                                value={formData.fullname}
                                 required
                               />
                             </div>
@@ -111,7 +171,7 @@ function AddCustomer() {
                                 name="phoneno"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                value={values.phoneno}
+                                value={formData.phoneno}
                                 required
                               />
                             </div>
@@ -133,13 +193,13 @@ function AddCustomer() {
                               aria-describedby="emailHelp"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              value={values.email}
+                              value={formData.email}
                             />
                             {errors.email && touched.email && errors.email}
                           </div>
 
                           <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
-                            <label for="validationTextarea" class="form-label">
+                            <label for="validationTextarea" className="form-label">
                               Address
                             </label>
                             <textarea
@@ -148,7 +208,7 @@ function AddCustomer() {
                               name="address"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              value={values.address}
+                              value={formData.address}
                               placeholder="Enter the current address"
                             ></textarea>
                           </div>
@@ -159,19 +219,26 @@ function AddCustomer() {
                               for="validationServer03"
                               className="form-label"
                             >
-                              City
+                              Country
                             </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="validationServer03"
-                              aria-describedby="validationServer03Feedback"
-                              name="city"
+                            <select
+                              className="form-select"
+                              id="validationServer04"
+                              aria-describedby="validationServer04Feedback"
+                              name="country"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              value={values.city}
+                              value={formData.country}
                               required
-                            />
+                            >
+                            {countryList?.map(function (countryData, index) {
+                              return (
+                                <>
+                                  <option key={countryData.iso3} value={countryData.country}>{countryData.country}</option>
+                                </>
+                              );
+                              })}
+                            </select>
                           </div>
 
                           <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
@@ -179,24 +246,25 @@ function AddCustomer() {
                               for="validationServer04"
                               className="form-label"
                             >
-                              State
+                              City
                             </label>
                             <select
                               className="form-select"
                               id="validationServer04"
                               aria-describedby="validationServer04Feedback"
-                              name="state"
+                              name="city"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              value={values.state}
+                              value={formData.city}
                               required
                             >
-                              <option selected disabled value="">
-                                Choose...
-                              </option>
-                              <option>TamilNadu</option>
-                              <option>Kerala</option>
-                              <option>Delhi</option>
+                            {cityList?.map(function (cityData, index) {
+                              return (
+                                  <>
+                                    <option key={cityData} value={cityData}>{cityData}</option>
+                                  </>
+                                );
+                            })}
                             </select>
                           </div>
                         </div>
@@ -208,13 +276,12 @@ function AddCustomer() {
                           <div className="col-xxl-1 col-xl-1 col-md-1 col-sm-5">
                         <button
                           className="btn btn-success  mb-4 rounded-2"
-                          type="reset"
                         >
                           Reset
                         </button>
                         </div>
                         <div className="col-xxl-1 col-xl-1 col-md-1 col-sm-5">
-                        <button class="btn btn-primary  mb-4 rounded-2" type="submit" disabled={isSubmitting}>
+                        <button className="btn btn-primary  mb-4 rounded-2" onClick={handleAddCustomer}>
                             Submit
                         </button>
                         </div>
