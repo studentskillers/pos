@@ -1,9 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
+import {addDoc,getDocs,collection} from "@firebase/firestore";
+import { firestore } from "../config/firestore";
 
 function AddProduct() {
+     const[categoryList,setCategorylist]=useState();
+
+  useEffect(()=>{
+    getCategory()
+  },[])
+   
+  async function getCategory(){
+    const ref=collection(firestore,"category_master");
+    const catList=await getDocs(ref);
+    setCategorylist(catList.docs.map(doc=>doc.data()));
+  }
+
+  const ref=collection(firestore,"product_master")
+
+  const handleSave=(values)=>{
+    console.log("checking handleSubmit -->",values)
+    try{
+        if(values!=""&&values!=undefined){
+            addDoc(ref,values)
+            alert("added successfully")
+        }else{
+          alert("enter valid data");
+        }  
+    }catch(err){
+       console.log(err)
+    }    
+}
+
   return (
     <>
       <div
@@ -27,7 +57,7 @@ function AddProduct() {
                 <Formik
                   initialValues={{
                     Category:"",
-                    Productname: "",
+                    ProductName: "",
                     SKU: "",
                     Description: "",
                     StockQty: "",
@@ -41,8 +71,8 @@ function AddProduct() {
                     if(!values.Category){
                       errors.Category="Required";
                     }
-                    if (!values.Productname) {
-                      errors.Productname = "Required";
+                    if (!values.ProductName) {
+                      errors.ProductName = "Required";
                     }
                     if (!values.SKU) {
                       errors.SKU = "Required";
@@ -65,10 +95,12 @@ function AddProduct() {
                     if(!values.ProductImg){
                       errors.ProductImg="Required";
                     }
+                    return errors;
                   }}
                   onSubmit={(values, { setSubmitting }) => {
-                  alert(JSON.stringify(values));
-                  setSubmitting(false);
+                    console.log(values);
+                   handleSave(values);
+                   
                   }}
                 >
                   {({
@@ -99,14 +131,17 @@ function AddProduct() {
                                onChange={handleChange}
                                onBlur={handleBlur}
                                value={values.Category}
-                               required
+                               
                               >
-                              <option selected disabled value="">
+                              <option value="">
                                 Choose...
                               </option>
-                              <option>CategoryCode</option>
-                              <option>CategoryName</option>
+                              {categoryList?.map(function(data,index){
+                               return <option value={data.CategoryCode}>{data.CategoryName}</option>
+                              })}
+                              
                             </select>
+                            {errors.Category && touched.Category && errors.Category} 
                             </div>
 
                             <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
@@ -124,15 +159,15 @@ function AddProduct() {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.ProductName}
-                                required 
                               />
+                              {errors.ProductName && touched.ProductName && errors.ProductName}
                             </div>
                          </div>
                         </div>
                         <div className="row">
                             <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                               <label
-                                for="validationProductname"
+                                for="validationSKU"
                                 className="form-label"
                               >
                                 SKU 
@@ -140,13 +175,13 @@ function AddProduct() {
                               <input
                                 type="text"
                                 className="form-control"
-                                id="validationProductname"
+                                id="validationSKU"
                                 name="SKU"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.SKU}
-                                required
                               />
+                            {errors.SKU && touched.SKU && errors.SKU}
                             </div>
 
                           <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
@@ -166,6 +201,7 @@ function AddProduct() {
                               placeholder="Enter the description"
                             >
                               </textarea>
+                              {errors.Description && touched.Description && errors.Description}
                           </div>
                         </div> 
                         <div className="row">
@@ -183,6 +219,7 @@ function AddProduct() {
                               onBlur={handleBlur}
                               value={values.StockQty}
                              />
+                             {errors.StockQty && touched.StockQty && errors.StockQty}
                             </div>
                           <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                             <label
@@ -195,13 +232,13 @@ function AddProduct() {
                               type="text"
                               className="form-control"
                               id="validationServer04"
-                              aria-describedby="Reorderqty"
-                              name="Reorderqty"
+                              aria-describedby="ReorderQty"
+                              name="ReorderQty"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              value={values.Reorderqty}
-                              required
+                              value={values.ReorderQty}
                             />
+                            {errors.ReorderQty && touched.ReorderQty && errors.ReorderQty}
                           </div>
                          </div>
                         <div className="row">                         
@@ -221,8 +258,8 @@ function AddProduct() {
                               onChange={handleChange}
                               onBlur={handleBlur}
                               value={values.CostPrice}
-                              required
                             />
+                            {errors.CostPrice && touched.CostPrice && errors.CostPrice}
                           </div>  
                           <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                             <label
@@ -240,8 +277,8 @@ function AddProduct() {
                               onChange={handleChange}
                               onBlur={handleBlur}
                               value={values.SellingPrice}
-                              required
                             />
+                            {errors.SellingPrice && touched.SellingPrice && errors.SellingPrice}
                           </div>
                         </div>
                         <br />
@@ -259,7 +296,7 @@ function AddProduct() {
                               Submit
                             </button>
                           </div>
-                          <div className="col-xxl-5 col-xl-5 col-md-5 col-sm-1">
+                          <div className="col -xxl-5 col-xl-5 col-md-5 col-sm-1">
                           </div>
                         </div>
                       </form>

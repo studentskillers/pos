@@ -1,42 +1,70 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
+import { firestore } from "../config/firestore";
+import{addDoc,getDocs,collection} from "@firebase/firestore";
 
 //const Product=[];
 function AddStock() {
-    const Products=[
-       {
-           ProductId:"001",
-            ProductSku:"SH001",
-            ProductName:"Sample1",
-            ProductCategory:"xyz",
-        },
-        {
-            ProductId:"002",
-            ProductSku:"SH001",
-            ProductName:"Sample2",
-            ProductCategory:"xxxyyyzzz",
-        },
-    ];   
-    //const Supplier=[
-      //{
-       // SupplierId:1,
-       // Name:"ZYX",
-        ///Phoneno:"123345566",
-        //Address:"abcd",
-        //City:"efgh",
-        //State:"ijkl",
-      //},
-      //{
-        //SupplierId:2,
-        //Name:"WVU",
-        //Phoneno:"098787654",
-        //Address:"mnop",
-        //City:"qrst",
-        //State:"uvwx",
-      //},
-//];
+    const[productList,setProductlist]=useState();
+
+  useEffect(()=>{
+    getProduct()
+  },[])
+
+  async function getProduct(){
+    const ref=collection(firestore,"product_master");
+    const prdList=await getDocs(ref);
+    setProductlist(prdList.docs.map(doc=>doc.data()));
+    console.log(prdList);
+  }
+
+  const ref=collection(firestore,"stock_master");
+  const handleSubmit=(values)=>{
+   try{
+    if(values!=""&&values!=undefined){
+        addDoc(ref,values)
+        alert("added successfully")
+    }else{
+        alert("enter a valid data");
+    }
+   }catch(err){
+    console.log(err)
+   }
+  }
+    // const Products=[
+    //    {
+    //        ProductId:"001",
+    //         ProductSku:"SH001",
+    //         ProductName:"Sample1",
+    //         ProductCategory:"xyz",
+    //     },
+    //     {
+    //         ProductId:"002",
+    //         ProductSku:"SH001",
+    //         ProductName:"Sample2",
+    //         ProductCategory:"xxxyyyzzz",
+    //     },
+    // ];   
+//     const Supplier=[
+//       {
+//        SupplierId:1,
+//        Name:"ZYX",
+//        Phoneno:"123345566",
+//         Address:"abcd",
+//         City:"efgh",
+//         State:"ijkl",
+//       },
+//       {
+//         SupplierId:2,
+//         Name:"WVU",
+//         Phoneno:"098787654",
+//         Address:"mnop",
+//         City:"qrst",
+//         State:"uvwx",
+//       },
+// ];
     return (
         <>
             <div
@@ -78,10 +106,10 @@ function AddStock() {
                                         if (!values.AddQty) {
                                             errors.AddQty = "Required";
                                         }
+                                        return errors;
                                     }}
                                     onSubmit={(values, { setSubmitting }) => {
-                                        alert(JSON.stringify(values));
-                                        setSubmitting(false);
+                                       handleSubmit(values)
                                     }}
                                 >
                                     {({
@@ -104,13 +132,22 @@ function AddStock() {
                                                             >
                                                                 Product
                                                             </label>
-                                                            <select>
-                                                                {Products.map(function(item,index){
-                                                                    <option value={item.ProductId}>
-                                                                        {item.ProductName}
+                                                            <select
+                                                            className="form-select"
+                                                            id="validationServer01"
+                                                            aria-describedby="validationServer01Feedback"
+                                                            name="Category"
+                                                            onChange={handleChange}
+                                                            onBlur={handleBlur}
+                                                            value={values.Product}
+                                                            >
+                                                              <option values="">Choose</option>
+                                                                {productList?.map(function(data,values){
+                                                                    return <option value={data.SKU}> {data.ProductName}
                                                                     </option>
                                                                 })};
                                                             </select>
+                                                            {errors.Product && touched.Product && errors.Product}
                                                         </div>
                                                         <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                                             <label
@@ -127,8 +164,8 @@ function AddStock() {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.CurrentStock}
-                                                                required
                                                             />
+                                                        {errors.CurrentStock && touched.CurrentStock && errors.CurrentStock}
                                                         </div>
                                                         <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                                             <label
@@ -145,7 +182,6 @@ function AddStock() {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.SupplierName}
-                                                                required
                                                             >
                                                                 <option selected disabled value="">
                                                                     Choose...
@@ -154,6 +190,7 @@ function AddStock() {
                                                                 <option>Supplier City</option>
                                                                 <option>Supplier Id</option>
                                                             </select>
+                                                            {errors.SupplierName && touched.SupplierName && errors.SupplierName}
                                                         </div>
                                                         <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                                             <label
@@ -170,8 +207,8 @@ function AddStock() {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.AddQty}
-                                                                required
                                                             />
+                                                         {errors.AddQty && touched.AddQty && errors.AddQty}
                                                         </div>
                                                     </div>
                                                     <br />
@@ -182,13 +219,13 @@ function AddStock() {
                                                         <div className="col-xxl-1 col-xl-1 col-md-1 col-sm-5">
                                                             <button
                                                                 className="btn btn-success  mb-4 rounded-2"
-                                                                type="reset"
+                                                                type="submit" disabled={isSubmitting}
                                                             >
                                                                 ADD
                                                             </button>
                                                         </div>
                                                         <div className="col-xxl-1 col-xl-1 col-md-1 col-sm-5">
-                                                            <button class="btn btn-primary  mb-4 rounded-2" type="submit" disabled={isSubmitting}>
+                                                            <button class="btn btn-primary  mb-4 rounded-2" type="cancel" >
                                                                 CANCEL
                                                             </button>
                                                         </div>

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
+import { firestore } from "../config/firestore";
+import{getDocs,collection} from "@firebase/firestore";
 
 import {
     DatatableWrapper,
@@ -24,48 +26,18 @@ import {
 
 function ManageCategory() {
 
-    const categoryData=[
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-         },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-        {
-            CategoryName:"Jean",
-            CategoryCode:"SH001",
-        },
-    ];
+ 
+  const[categoryList,setCategorylist]=useState();
+
+  useEffect(()=>{
+    getCategory()
+  },[])
+
+  async function getCategory(){
+    const ref=collection(firestore,"category_master");
+    const catList=await getDocs(ref);
+    setCategorylist(catList.docs.map(doc=>doc.data()));
+  }
   return (
     <>
       <div
@@ -107,7 +79,7 @@ function ManageCategory() {
                   </tr>
                 </thead>
                 <tbody>
-                    {categoryData.map(function (data) {
+                    {categoryList?.map(function (data,index) {
                         return <>
                         <tr>
                         <td>#c0001</td>

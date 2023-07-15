@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
+import {addDoc,getDocs,collection} from "@firebase/firestore";
+import { firestore } from "../config/firestore";
 
 function AddCategory() {
+    
+    const ref=collection(firestore,"category_master");
+
+    const handleSubmit=(values)=>{
+        try{
+            if(values!=""&&values!=undefined){
+                addDoc(ref,values)
+                alert("added successfully")
+            }else{
+              alert("enter valid data");
+            }  
+        }catch(err){
+           console.log(err)
+        }    
+    }
+
     return (
         <>
             <div
@@ -18,7 +36,7 @@ function AddCategory() {
                 <SideMenu></SideMenu>
 
 
-                <div className="body-wrapper">
+                  <div className="body-wrapper">
                     <TopBar></TopBar>
                     <div className="container-fluid">
                         <div className="card">
@@ -37,17 +55,17 @@ function AddCategory() {
                                         if (!values.CategoryCode) {
                                             errors.CategoryCode = "Required";
                                         }
+                                        return errors;
                                     }}
                                     onSubmit={(values, { setSubmitting }) => {
-                                        alert(JSON.stringify(values));
-                                        setSubmitting(false);
+                                        handleSubmit(values);
                                     }}
                                 >
                                     {({
                                         values,
                                         errors,
-                                        touched,
-                                        handleChange,
+                                        touched, 
+                                        handleChange,  
                                         handleBlur,
                                         handleSubmit,
                                         isSubmitting,
@@ -71,8 +89,8 @@ function AddCategory() {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.CategoryName}
-                                                                required
                                                             />
+                                                            {errors.CategoryName && touched.CategoryName && errors.CategoryName}
                                                         </div>
                                                         <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                                             <label
@@ -89,8 +107,8 @@ function AddCategory() {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.CategoryCode}
-                                                                required
                                                             />
+                                                             {errors.CategoryCode && touched.CategoryCode && errors.CategoryCode}
                                                         </div>
                                                     </div>
                                                         <br/>

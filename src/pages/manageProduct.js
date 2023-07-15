@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
+import { firestore } from "../config/firestore";
+import {getDocs,collection} from "@firebase/firestore"
 
 import {
   DatatableWrapper,
@@ -23,63 +25,18 @@ const header = [
 
 
 function ManageProduct() {
+  const[productList,setProductList]=useState();
 
-  const productData = [
-    {
-      Productname: "Kurthi",
-      SKU: "SH001",
-      Description: "top",
-      StockQty: 10,
-      ReorderQty: 1,
-      CostPrice: 1000,
-      SellingPrice: 950
-    },
-    {
-      Productname: "Kurthi",
-      SKU: "SH001",
-      Description: "top",
-      StockQty: 10,
-      ReorderQty: 1,
-      CostPrice: 1000,
-      SellingPrice: 950
-    },
-    {
-      Productname: "Kurthi",
-      SKU: "SH001",
-      Description: "top",
-      StockQty: 10,
-      ReorderQty: 1,
-      CostPrice: 1000,
-      SellingPrice: 950
-    },
-    {
-      Productname: "Kurthi",
-      SKU: "SH001",
-      Description: "top",
-      StockQty: 10,
-      ReorderQty: 1,
-      CostPrice: 1000,
-      SellingPrice: 950
-    },
-    {
-      Productname: "Kurthi",
-      SKU: "SH001",
-      Description: "top",
-      StockQty: 10,
-      ReorderQty: 1,
-      CostPrice: 1000,
-      SellingPrice: 950
-    },
-    {
-      Productname: "Kurthi",
-      SKU: "SH001",
-      Description: "top",
-      StockQty: 10,
-      ReorderQty: 1,
-      CostPrice: 1000,
-      SellingPrice: 950
-    },
-  ];
+  useEffect(()=>{
+    getProduct()
+  },[])
+
+  async function getProduct(){
+    const ref=collection(firestore,"product_master");
+    const prdList=await getDocs(ref);
+    setProductList(prdList.docs.map(doc=>doc.data()));
+    console.log(prdList);
+  }
   return (
     <>
       <div
@@ -125,16 +82,16 @@ function ManageProduct() {
                   </tr>
                 </thead>
                 <tbody>
-                  {productData.map(function (data) {
+                  {productList?.map(function (data,index) {
                     return <>
                       <tr>
-                        <td>{data.Productname}</td>
+                        <td>{data.ProductName}</td>
                         <td>{data.SKU}</td>
                         <td>{data.Description}</td>
                         <td>{data.StockQty}</td>
                         <td>{data.ReorderQty}</td>
                         <td>{data.CostPrice}</td>
-                        <td>{data.SellingPrice}</td>
+                         <td>{data.SellingPrice}</td>
                         <td>Edit/Delete</td>
                       </tr>
                     </>
