@@ -80,8 +80,8 @@ function ManageCustomer() {
                     <th>Mobile no</th>
                     <th>Email</th>
                     <th>Address</th>
+                    <th>Country</th>
                     <th>City</th>
-                    <th>State</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -94,8 +94,8 @@ function ManageCustomer() {
                         <td>{data.phoneno}</td>
                         <td>{data.email}</td>
                         <td>{data.address}</td>
+                        <td>{data.country}</td>
                         <td>{data.city}</td>
-                        <td>{data.state}</td>
                         <td>Edit Delete</td>
                         </tr>
                         </>

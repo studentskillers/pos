@@ -1,7 +1,6 @@
 import React from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
-import { Formik } from "formik";
 
 function ManageUser() {
   const userData = [
