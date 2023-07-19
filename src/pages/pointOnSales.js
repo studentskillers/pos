@@ -1,13 +1,19 @@
 import React from "react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import moment from "moment";
 import products from "../products.jpg";
+import { firestore } from "../config/firestore";
+import { getDocs, collection } from "@firebase/firestore";
 
 function PointOnSales() {
   const time = moment().format("MMMM Do dddd YYYY");
   const [curTime, setCurTime] = useState("");
+  const ref = collection(firestore, "customer_master");
+  const [customerList, setCustomerList] = useState();
+  const [proList, setProlist] = useState([]);
+  const [cartArr,setCartArr]= useState([]);
   const productList = [
     {
       id: 1,
@@ -51,8 +57,10 @@ function PointOnSales() {
     },
   ];
 
-  const [proList, setProlist] = useState(productList);
-  console.log(proList);
+  
+  useEffect(()=>{
+    setProlist(productList);
+  },[]);
 
   // const showtime = () => {
   //     setCurTime(time);
@@ -62,18 +70,27 @@ function PointOnSales() {
   //     showtime();
   //   }, 1000);
 
-  const cartArr = [];
 
   const cartFun = (id, title, price, quantity) => {
     var cartObj = {
       productId: id,
       title: title,
       price: price,
-      quantity: quantity,
+      quantity: 1,
     };
-    cartArr.push(cartObj);
+    setCartArr(cartObj);
     // console.log(cartArr);
   };
+
+  useEffect(() => {
+    getCustomer();
+  }, []);
+
+  async function getCustomer() {
+    const cusList = await getDocs(ref);
+    setCustomerList(cusList.docs.map((doc) => doc.data()));
+    console.log(customerList);
+  }
 
   return (
     <>
@@ -119,10 +136,14 @@ function PointOnSales() {
                   {proList.map(function (list, index) {
                     return (
                       <>
-                        <div className="col-xxl-2 col-xl-2 col-md-4 col-sm-6 ml-1" id="Product1">
+                        <div
+                          className="col-xxl-2 col-xl-2 col-md-4 col-sm-6 ml-1"
+                          id={`Product${list.id}`}
+                          onClick={() => cartFun(list.id,list.title, list.price, list.quantity)}
+                          key={list.id}
+                        >
                           <div
                             className="card"
-                            onClick={cartFun(1, "Product 1", 200)}
                           >
                             <img
                               src={products}
@@ -143,11 +164,25 @@ function PointOnSales() {
               {/* Products Content Page End */}
               <div className="col-4">
                 <div className="row">
-                  <div className="col-9">
-                    <h2>Current Order</h2>
-                  </div>
-                  <div className="col-3">
-                    <h1>***</h1>
+                  <div className="col">
+                    <select
+                      className="form-select mb-3"
+                      id="validationServer04"
+                      aria-describedby="validationServer04Feedback"
+                      name="customerName"
+                      required
+                    >
+                      <option value="">Choose a customer...</option>
+                      {customerList?.map(function (data, index) {
+                        return (
+                          <>
+                            <option key={index} value={data.fullname}>
+                              {data.fullname} - {data.phoneno}
+                            </option>
+                          </>
+                        );
+                      })}
+                    </select>
                   </div>
                 </div>
                 <div className="row">
@@ -167,13 +202,15 @@ function PointOnSales() {
                       <th>Subtotal</th>
                     </thead>
                     <tbody>
-                      {cartArr.map(function (data, index) {
+                    {Array.isArray(cartArr) && cartArr.map(function (data, index) {
+                        return (
                         <tr key={index}>
                           <td>{data.title}</td>
                           <td>{data.price}</td>
                           <td>{data.quantity}</td>
                           <td>{data.price}</td>
-                        </tr>;
+                        </tr>
+                        );
                       })}
                     </tbody>
                   </table>

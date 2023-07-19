@@ -1,7 +1,30 @@
 import React from "react";
 import { Formik } from "formik";
+import { firestore } from "../config/firestore";
+import { addDoc, collection } from "@firebase/firestore";
+
 
 function RegistrationPage() {
+
+  const ref=collection(firestore,"user_master");
+
+  
+
+  const handleClick=(values)=>{
+    try{
+      if(values!==0){
+        addDoc(ref,values);
+        alert("submitted");
+      }else{
+        alert("error");
+      }
+    }catch(err){
+      console.log('Error adding document: ', err);
+    }
+
+  }
+
+
   return (
     <>
       <div
@@ -56,10 +79,14 @@ function RegistrationPage() {
                         }
                         if (!values.confirmpassword) {
                           errors.confirmpassword = "Required";
+                        } else if (values.password !== values.confirmpassword) {
+                          errors.confirmpassword = 'Passwords do not match';
                         }
+                        return errors;
                       }}
                       onSubmit={(values, { setSubmitting }) => {
                         alert(JSON.stringify(values));
+                        handleClick(values);
                         setSubmitting(false);
                       }}
                     >
@@ -88,6 +115,7 @@ function RegistrationPage() {
                                 onBlur={handleBlur}
                                 value={values.name}
                               />
+                              {errors.name && touched.name && errors.name}
                             </div>
                             <div class="mb-3">
                               <label
@@ -124,6 +152,7 @@ function RegistrationPage() {
                                 onBlur={handleBlur}
                                 value={values.password}
                               />
+                              {errors.password && touched.password && errors.password}
                             </div>
                             <div class="mb-4">
                               <label
@@ -141,13 +170,14 @@ function RegistrationPage() {
                                 onBlur={handleBlur}
                                 value={values.confirmpassword}
                               />
+                              {errors.confirmpassword && touched.confirmpassword && errors.confirmpassword}
                             </div>
                             <div className="row">
                               <div className="col-xxl-2 col-xl-2 col-md-2 col-sm-1"></div>
                               <div className="col-xxl-4 col-xl-4 col-md-4 col-sm-5">
                                 <button
                                   className="btn btn-success  mb-4 rounded-2"
-                                  type="button"
+                                  type="submit"
                                   disabled={isSubmitting}
                                 >
                                   Register

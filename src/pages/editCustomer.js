@@ -138,7 +138,6 @@ function EditCustomer() {
                               />
                             </div>
                           </div>
-                        </div>
                         <div className="row">
                           <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                             <label
@@ -243,6 +242,7 @@ function EditCustomer() {
                         <div className="col-xxl-5 col-xl-5 col-md-5 col-sm-1">
 
                         </div>
+                       </div>
                        </div>
                       </form>
                     );

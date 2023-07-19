@@ -73,6 +73,7 @@ function ManageProduct() {
                   <tr>
                     <th>Product Name </th>
                     <th>SKU</th>
+                    <th>Category</th>
                     <th>Description </th>
                     <th>Stock Qty</th>
                     <th>Reorder Qty</th>
@@ -87,6 +88,7 @@ function ManageProduct() {
                       <tr>
                         <td>{data.ProductName}</td>
                         <td>{data.SKU}</td>
+                        <td>{data.Category}</td>
                         <td>{data.Description}</td>
                         <td>{data.StockQty}</td>
                         <td>{data.ReorderQty}</td>
