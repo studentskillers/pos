@@ -20,11 +20,11 @@ function AddProduct() {
 
   const ref = collection(firestore, "product_master");
 
-  const handleSave = async (values) => {
+  const handleSubmit =  (values) => {
     console.log("checking handleSubmit -->", values);
     try {
       if (values !== "" && values !== undefined) {
-        await addDoc(ref, { ...values });
+         addDoc(ref,values);
         alert("added successfully");
       } else {
         alert("enter valid data");
@@ -98,10 +98,8 @@ function AddProduct() {
                     return errors;
                   }}
                   onSubmit={(values, { setSubmitting }) => {
-                    alert(JSON.stringify(values));
                     console.log(values);
-                    handleSave(values);
-                    setSubmitting(false);
+                    handleSubmit(values);
                   }}
                 >
                   {({

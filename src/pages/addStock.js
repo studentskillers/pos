@@ -1,70 +1,54 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
+import { addDoc, getDocs, collection } from "@firebase/firestore";
 import { firestore } from "../config/firestore";
-import{addDoc,getDocs,collection} from "@firebase/firestore";
 
-//const Product=[];
+
 function AddStock() {
-    const[productList,setProductlist]=useState();
+    const [productList, setProductList] = useState();
+
+    useEffect(() => {
+        getProduct()
+    }, [])
+
+    async function getProduct() {
+        const ref = collection(firestore, "product_master");
+        const prdList = await getDocs(ref);
+        setProductList(prdList.docs.map(doc => doc.data()));
+        console.log(prdList);
+    }
+
+
+    const[supplierList,setSupplierlist]=useState();
 
   useEffect(()=>{
-    getProduct()
+    getSupplier()
   },[])
 
-  async function getProduct(){
-    const ref=collection(firestore,"product_master");
-    const prdList=await getDocs(ref);
-    setProductlist(prdList.docs.map(doc=>doc.data()));
-    console.log(prdList);
+  async function getSupplier(){
+    const ref=collection(firestore,"supplier_master");
+    const supList=await getDocs(ref);
+    setSupplierlist(supList.docs.map(doc=>doc.data()));
   }
 
-  const ref=collection(firestore,"stock_master");
-  const handleSubmit=(values)=>{
-   try{
-    if(values!=""&&values!=undefined){
-        addDoc(ref,values)
-        alert("added successfully")
-    }else{
-        alert("enter a valid data");
-    }
-   }catch(err){
-    console.log(err)
-   }
-  }
-    // const Products=[
-    //    {
-    //        ProductId:"001",
-    //         ProductSku:"SH001",
-    //         ProductName:"Sample1",
-    //         ProductCategory:"xyz",
-    //     },
-    //     {
-    //         ProductId:"002",
-    //         ProductSku:"SH001",
-    //         ProductName:"Sample2",
-    //         ProductCategory:"xxxyyyzzz",
-    //     },
-    // ];   
-//     const Supplier=[
-//       {
-//        SupplierId:1,
-//        Name:"ZYX",
-//        Phoneno:"123345566",
-//         Address:"abcd",
-//         City:"efgh",
-//         State:"ijkl",
-//       },
-//       {
-//         SupplierId:2,
-//         Name:"WVU",
-//         Phoneno:"098787654",
-//         Address:"mnop",
-//         City:"qrst",
-//         State:"uvwx",
-//       },
-// ];
+
+    const ref = collection(firestore, "stock_master");
+    const handleSubmit = (values) => {
+        try {
+            if (values !== "" && values !== undefined) {
+                addDoc(ref, values)
+                alert("added successfully")
+            } else {
+                alert("enter a valid data");
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    };
+
+  
     return (
         <>
             <div
@@ -78,7 +62,7 @@ function AddStock() {
             >
                 <SideMenu></SideMenu>
 
-
+                {/* <!--  Main wrapper --> */}
                 <div className="body-wrapper">
                     <TopBar></TopBar>
                     <div className="container-fluid">
@@ -109,7 +93,7 @@ function AddStock() {
                                         return errors;
                                     }}
                                     onSubmit={(values, { setSubmitting }) => {
-                                       handleSubmit(values)
+                                        handleSubmit(values)
                                     }}
                                 >
                                     {({
@@ -133,21 +117,26 @@ function AddStock() {
                                                                 Product
                                                             </label>
                                                             <select
-                                                            className="form-select"
-                                                            id="validationServer01"
-                                                            aria-describedby="validationServer01Feedback"
-                                                            name="Category"
-                                                            onChange={handleChange}
-                                                            onBlur={handleBlur}
-                                                            value={values.Product}
+                                                                className="form-select"
+                                                                id="validationServer01"
+                                                                aria-describedby="validationServer01Feedback"
+                                                                name="Product"
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                                value={values.Product}
                                                             >
-                                                              <option values="">Choose</option>
-                                                                {productList?.map(function(data,values){
-                                                                    return <option value={data.SKU}> {data.ProductName}
-                                                                    </option>
-                                                                })};
+                                                                <option value="">Choose...</option>
+                                                                {productList?.map(function (data, index) {
+                                                                    return (
+                                                                        <option value={data.SKU}>
+                                                                            {data.ProductName}
+                                                                        </option>
+                                                                    );
+                                                                })}
                                                             </select>
-                                                            {errors.Product && touched.Product && errors.Product}
+                                                            {errors.Product &&
+                                                                touched.Product &&
+                                                                errors.Product}
                                                         </div>
                                                         <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                                             <label
@@ -165,7 +154,9 @@ function AddStock() {
                                                                 onBlur={handleBlur}
                                                                 value={values.CurrentStock}
                                                             />
-                                                        {errors.CurrentStock && touched.CurrentStock && errors.CurrentStock}
+                                                            {errors.CurrentStock &&
+                                                                touched.CurrentStock &&
+                                                                errors.CurrentStock}
                                                         </div>
                                                         <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                                             <label
@@ -183,21 +174,25 @@ function AddStock() {
                                                                 onBlur={handleBlur}
                                                                 value={values.SupplierName}
                                                             >
-                                                                <option selected disabled value="">
-                                                                    Choose...
-                                                                </option>
-                                                                <option>Supplier State </option>
-                                                                <option>Supplier City</option>
-                                                                <option>Supplier Id</option>
+                                                                <option value=""> Choose...</option>
+                                                                {supplierList?.map(function(data,index){
+                                                                    return(
+                                                                        <option value={data.Phoneno}>
+                                                                            {data.Name}
+                                                                        </option>
+                                                                    )
+                                                                })}
                                                             </select>
-                                                            {errors.SupplierName && touched.SupplierName && errors.SupplierName}
+                                                            {errors.SupplierName &&
+                                                                touched.SupplierName &&
+                                                                errors.SupplierName}
                                                         </div>
                                                         <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                                             <label
                                                                 for="validationServer04"
                                                                 className="form-label"
                                                             >
-                                                                 Add Qty
+                                                                Add Qty
                                                             </label>
                                                             <input
                                                                 type="text"
@@ -208,7 +203,9 @@ function AddStock() {
                                                                 onBlur={handleBlur}
                                                                 value={values.AddQty}
                                                             />
-                                                         {errors.AddQty && touched.AddQty && errors.AddQty}
+                                                            {errors.AddQty &&
+                                                                touched.AddQty &&
+                                                                errors.AddQty}
                                                         </div>
                                                     </div>
                                                     <br />
