@@ -4,17 +4,8 @@ import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
 import { firestore } from "../config/firestore";
-import { addDoc,getDocs, collection } from "@firebase/firestore";
-
-import {
-    DatatableWrapper,
-    Filter,
-    Pagination,
-    PaginationOpts,
-    TableBody,
-    TableHeader
-  } from 'react-bs-datatable';
-  import { Col, Row, Table } from 'react-bootstrap';
+import { getDocs, collection } from "@firebase/firestore";
+import CustomerModal from "./customerModal";
   
   import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -28,8 +19,18 @@ import {
 function ManageCustomer() {
 
   const ref=collection(firestore,"customer_master");
+  const [open, setOpen] = useState(false);
+  const [customerList, setCustomerList] = useState();  
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  const [customerList, setCustomerList] = useState();
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
     useEffect(()=>{
       getCustomer()
@@ -40,6 +41,10 @@ function ManageCustomer() {
       setCustomerList(cusList.docs.map(doc => doc.data()));
       console.log(customerList);
     }
+
+    useEffect(() => {
+      setInitialLoad(false);
+    }, []);
 
   return (
     <>
@@ -65,10 +70,13 @@ function ManageCustomer() {
             <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
               <button
                 className="btn btn-primary  mb-3 rounded-2"
-                type="button"
+                onClick={handleOpen}
               >
                 Add Customer
               </button>
+              {initialLoad ? null : (
+              <CustomerModal open={open} handleClose={handleClose} />
+              )}
             </div>
             </div>
             <div>

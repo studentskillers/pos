@@ -1,28 +1,24 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
+import { firestore } from "../config/firestore";
+import { getDocs, collection } from "@firebase/firestore";
 
 function ManageUser() {
-  const userData = [
-    {
-      name: "Arunachalam",
-      email: "arunachalam@gmail.com",
-      password: "12345678",
-      confirmpassword: "12345678",
-    },
-    {
-      name: "Sridhar",
-      email: "sridhar@gmail.com",
-      password: "12345678",
-      confirmpassword: "12345678",
-    },
-    {
-      name: "Kavitha",
-      email: "kavitha@gmail.com",
-      password: "12345678",
-      confirmpassword: "12345678",
-    },
-  ];
+
+  const ref=collection(firestore,"user_master");
+  const[userList,setUserList]=useState();
+
+  useEffect(()=>{
+    getUser()
+  },[])
+
+  async function getUser() {
+    const uList=await getDocs(ref);
+    setUserList(uList.docs.map(doc => doc.data()));
+    console.log(userList);
+  }
+
   return (
     <>
       <div
@@ -57,18 +53,16 @@ function ManageUser() {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Password</th>
-                    <th>Confirm Password</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {userData.map(function (data) {
+                  {userList?.map(function (data,index) {
                     return (
                       <>
-                        <tr>
+                        <tr key={index}>
                           <td>{data.name}</td>
                           <td>{data.email}</td>
                           <td>{data.password}</td>
-                          <td>{data.confirmpassword}</td>
                         </tr>
                       </>
                     );
