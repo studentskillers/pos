@@ -20,7 +20,9 @@ import EditCategory from './pages/editCategory';
 import EditProduct from './pages/editProduct';
 import ManageCategory from './pages/manageCategory';
 import ManageProduct from './pages/manageProduct';
-
+import ManageStock from './pages/manageStock';
+import AddSupplier from './pages/addSupplier';
+import ManageSupplier from './pages/manageSupplier';
 
 
 
@@ -39,6 +41,7 @@ function App() {
         <Route path='/addcategory' element={<AddCategory/>} />        
         <Route path='/addproduct' element={<AddProduct/>} />        
         <Route path='/addstock' element={<AddStock/>} />
+        <Route path='/managestock' element={<ManageStock/>} />
         <Route path='/managecustomer' element={<ManageCustomer/>} />
         <Route path='/editcustomer' element={<EditCustomer/>} />       
         <Route path='/editcategory' element={<EditCategory/>} />
@@ -49,6 +52,8 @@ function App() {
         <Route path='/registration' element={<RegistrationPage/>} />
         <Route path='/manageuser' element={<ManageUser/>} />
         <Route path='/pointonsales' element={<PointOnSales/>} />
+        <Route path='/addsupplier' element={<AddSupplier/>}/>
+        <Route path='/managesupplier' element={<ManageSupplier/>}/>
        </Routes>
     </BrowserRouter>
   );
