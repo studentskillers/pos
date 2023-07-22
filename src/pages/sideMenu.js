@@ -176,15 +176,6 @@ function SideMenu() {
             </li>
 
             <li className="sidebar-item">
-                <Link className="sidebar-link" to="/editcustomer">
-                    <span>
-                    <i className="ti ti-layout-dashboard"></i>
-                    </span>
-                    <span className="hide-menu">Edit Customer</span>
-                </Link>
-            </li>
-
-            <li className="sidebar-item">
                 <Link className="sidebar-link" to="/pointonsales">
                     <span>
                     <i className="ti ti-layout-dashboard"></i>

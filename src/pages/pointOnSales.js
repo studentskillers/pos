@@ -114,22 +114,22 @@ function PointOnSales() {
               <div className="col-8">
                 <div className="row mb-2">
                   <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Categories</a>
+                    <a className="btn btn-primary">Category 1</a>
                   </div>
                   <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Categories</a>
+                    <a className="btn btn-primary">Category 2</a>
                   </div>
                   <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Categories</a>
+                    <a className="btn btn-primary">Category 3</a>
                   </div>
                   <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Categories</a>
+                    <a className="btn btn-primary">Category 4</a>
                   </div>
                   <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Categories</a>
+                    <a className="btn btn-primary">Category 5</a>
                   </div>
                   <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Categories</a>
+                    <a className="btn btn-primary">Category 6</a>
                   </div>
                 </div>
                 <div className="row">
