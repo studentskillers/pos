@@ -85,15 +85,6 @@ function SideMenu() {
             </li>
 
             <li className="sidebar-item">
-                <Link className="sidebar-link" to="/addcustomer">
-                    <span>
-                    <i className="ti ti-layout-dashboard"></i>
-                    </span>
-                    <span className="hide-menu">Add Customer</span>
-                </Link>
-            </li>
-
-            <li className="sidebar-item">
                 <Link className="sidebar-link" to="/addcategory">
                     <span>
                     <i className="ti ti-layout-dashboard"></i>

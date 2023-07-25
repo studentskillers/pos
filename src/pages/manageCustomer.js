@@ -1,28 +1,24 @@
 import React from "react";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
 import { firestore } from "../config/firestore";
 import { getDocs, collection } from "@firebase/firestore";
-import CustomerModal from "./customerModal";
-  
-  import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Link } from "react-router-dom";
 
-  const header = [
-    { title: 'Username', prop: 'username' },
-    { title: 'Name', prop: 'realname' },
-    { title: 'Location', prop: 'location' }
-  ];
-  
+const header = [
+  { title: "Username", prop: "username" },
+  { title: "Name", prop: "realname" },
+  { title: "Location", prop: "location" },
+];
 
 function ManageCustomer() {
-
-  const ref=collection(firestore,"customer_master");
+  const ref = collection(firestore, "customer_master");
   const [open, setOpen] = useState(false);
-  const [customerList, setCustomerList] = useState();  
+  const [customerList, setCustomerList] = useState();
   const [initialLoad, setInitialLoad] = useState(true);
-
 
   const handleOpen = () => {
     setOpen(true);
@@ -32,19 +28,19 @@ function ManageCustomer() {
     setOpen(false);
   };
 
-    useEffect(()=>{
-      getCustomer()
-    },[])
+  useEffect(() => {
+    getCustomer();
+  }, []);
 
-    async function getCustomer() {
-      const cusList=await getDocs(ref);
-      setCustomerList(cusList.docs.map(doc => doc.data()));
-      console.log(customerList);
+  async function getCustomer() {
+    const cusList = await getDocs(ref);
+    setCustomerList(cusList.docs.map((doc) => doc.data()));
+    console.log(customerList);
     }
 
-    useEffect(() => {
-      setInitialLoad(false);
-    }, []);
+  useEffect(() => {
+    setInitialLoad(false);
+  }, []);
 
   return (
     <>
@@ -63,21 +59,15 @@ function ManageCustomer() {
         <div className="body-wrapper">
           <TopBar></TopBar>
           <div className="container-fluid">
-          <div className="row">
-                <div className="col-xxl-10 col-xl-10 col-md-10 col-sm-8">
-                    <h2>Manage Customer</h2>
-                </div>
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
-              <button
-                className="btn btn-primary  mb-3 rounded-2"
-                onClick={handleOpen}
-              >
-                Add Customer
-              </button>
-              {initialLoad ? null : (
-              <CustomerModal open={open} handleClose={handleClose} />
-              )}
-            </div>
+            <div className="row">
+              <div className="col-xxl-10 col-xl-10 col-md-10 col-sm-8">
+                <h2>Manage Customer</h2>
+              </div>
+              <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
+                  <Link className="btn btn-primary rounded" to="/addcustomer">
+                    <span className="hide-menu">Add Customer</span>
+                  </Link>
+              </div>
             </div>
             <div>
               <table className="table table-striped table-responsive">
@@ -94,20 +84,22 @@ function ManageCustomer() {
                   </tr>
                 </thead>
                 <tbody>
-                    {customerList?.map(function (data,index) {
-                        return <>
+                  {customerList?.map(function (data, index) {
+                    return (
+                      <>
                         <tr key={data.index}>
-                        <td>#cc001</td>
-                        <td>{data.fullname}</td>
-                        <td>{data.phoneno}</td>
-                        <td>{data.email}</td>
-                        <td>{data.address}</td>
-                        <td>{data.country}</td>
-                        <td>{data.city}</td>
-                        <td>Edit Delete</td>
+                          <td>#cc001</td>
+                          <td>{data.fullname}</td>
+                          <td>{data.phoneno}</td>
+                          <td>{data.email}</td>
+                          <td>{data.address}</td>
+                          <td>{data.country}</td>
+                          <td>{data.city}</td>
+                          <td>Edit Delete</td>
                         </tr>
-                        </>
-                    })}
+                      </>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

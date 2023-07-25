@@ -1,11 +1,13 @@
 import React from "react";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import moment from "moment";
 import products from "../products.jpg";
 import { firestore } from "../config/firestore";
 import { getDocs, collection } from "@firebase/firestore";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import CustomerModal from "./customerModal";
 
 function PointOnSales() {
   const time = moment().format("MMMM Do dddd YYYY");
@@ -13,7 +15,9 @@ function PointOnSales() {
   const ref = collection(firestore, "customer_master");
   const [customerList, setCustomerList] = useState();
   const [proList, setProlist] = useState([]);
-  const [cartArr,setCartArr]= useState([]);
+  const [open, setOpen] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [cartArr, setCartArr] = useState([]);
   const productList = [
     {
       id: 1,
@@ -57,10 +61,9 @@ function PointOnSales() {
     },
   ];
 
-  
-  useEffect(()=>{
+  useEffect(() => {
     setProlist(productList);
-  },[]);
+  }, []);
 
   // const showtime = () => {
   //     setCurTime(time);
@@ -70,6 +73,17 @@ function PointOnSales() {
   //     showtime();
   //   }, 1000);
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    setInitialLoad(false);
+  }, []);
 
   const cartFun = (id, title, price, quantity) => {
     var cartObj = {
@@ -139,12 +153,17 @@ function PointOnSales() {
                         <div
                           className="col-xxl-2 col-xl-2 col-md-4 col-sm-6 ml-1"
                           id={`Product${list.id}`}
-                          onClick={() => cartFun(list.id,list.title, list.price, list.quantity)}
+                          onClick={() =>
+                            cartFun(
+                              list.id,
+                              list.title,
+                              list.price,
+                              list.quantity
+                            )
+                          }
                           key={list.id}
                         >
-                          <div
-                            className="card"
-                          >
+                          <div className="card">
                             <img
                               src={products}
                               className="card-img-top"
@@ -164,7 +183,7 @@ function PointOnSales() {
               {/* Products Content Page End */}
               <div className="col-4">
                 <div className="row">
-                  <div className="col">
+                  <div className="col-10">
                     <select
                       className="form-select mb-3"
                       id="validationServer04"
@@ -184,9 +203,19 @@ function PointOnSales() {
                       })}
                     </select>
                   </div>
+                  <div className="col-2">
+                    <PersonAddAlt1Icon
+                      color="primary"
+                      fontSize="large"
+                      onClick={handleOpen}
+                    />
+                  </div>
+                  {initialLoad ? null : (
+                    <CustomerModal open={open} handleClose={handleClose} />
+                  )}
                 </div>
                 <div className="row">
-                  <div className="col-12">
+                  <div className="col">
                     <h4>
                       Date:
                       {/* {curTime} */}
@@ -202,16 +231,17 @@ function PointOnSales() {
                       <th>Subtotal</th>
                     </thead>
                     <tbody>
-                    {Array.isArray(cartArr) && cartArr.map(function (data, index) {
-                        return (
-                        <tr key={index}>
-                          <td>{data.title}</td>
-                          <td>{data.price}</td>
-                          <td>{data.quantity}</td>
-                          <td>{data.price}</td>
-                        </tr>
-                        );
-                      })}
+                      {Array.isArray(cartArr) &&
+                        cartArr.map(function (data, index) {
+                          return (
+                            <tr key={index}>
+                              <td>{data.title}</td>
+                              <td>{data.price}</td>
+                              <td>{data.quantity}</td>
+                              <td>{data.price}</td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
