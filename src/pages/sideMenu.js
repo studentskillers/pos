@@ -21,45 +21,13 @@ function SideMenu() {
         {/* <!-- Sidebar navigation--> */}
         <nav className="sidebar-nav scroll-sidebar" data-simplebar="">
           <ul id="sidebarnav">
-           
 
-
-            <li className="sidebar-item">
-                <Link className="sidebar-link" to="/" aria-expanded="false"> 
+          <li className="sidebar-item">
+                <Link className="sidebar-link" to="/">
                     <span>
                     <i className="ti ti-layout-dashboard"></i>
                     </span>
-                    <span className="hide-menu">Home</span>
-                </Link>
-            </li>
-
-            <li className="sidebar-item">
-                <Link className="sidebar-link"  to="/contact" aria-expanded="false">  
-              
-                <span>
-                <i className="ti ti-layout-dashboard"></i>
-                </span>
-                <span className="hide-menu">Contact</span>
-                </Link>
-            </li>
-
-            <li className="sidebar-item">
-                <Link className="sidebar-link"  to="/signin" aria-expanded="false">  
-              
-                <span>
-                <i className="ti ti-layout-dashboard"></i>
-                </span>
-                <span className="hide-menu">Login</span>
-                </Link>
-            </li>
-
-            <li className="sidebar-item">
-                <Link className="sidebar-link"  to="/registration" aria-expanded="false">  
-              
-                <span>
-                <i className="ti ti-layout-dashboard"></i>
-                </span>
-                <span className="hide-menu">Register</span>
+                    <span className="hide-menu">Dashboard</span>
                 </Link>
             </li>
 
@@ -74,15 +42,6 @@ function SideMenu() {
                 </Link>
             </li>
 
-
-            <li className="sidebar-item">
-                <Link className="sidebar-link" to="/dashboard">
-                    <span>
-                    <i className="ti ti-layout-dashboard"></i>
-                    </span>
-                    <span className="hide-menu">Dashboard</span>
-                </Link>
-            </li>
 
             <li className="sidebar-item">
                 <Link className="sidebar-link" to="/addcategory">

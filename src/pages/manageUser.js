@@ -3,6 +3,7 @@ import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { firestore } from "../config/firestore";
 import { getDocs, collection } from "@firebase/firestore";
+import { Link } from "react-router-dom";
 
 function ManageUser() {
 
@@ -37,14 +38,17 @@ function ManageUser() {
           <TopBar></TopBar>
           <div className="container-fluid">
             <div className="row">
-                <div className="col-xxl-10 col-xl-10 col-md-10 col-sm-8">
+                <div className="col-xxl-8 col-xl-8 col-md-8 col-sm-6">
                     <h2>Manage User</h2>
                 </div>
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
-              <button className="btn btn-primary mb-4 rounded-2" type="button">
-                Register
-              </button>
-            </div>
+                <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-4 col-xl-4 col-md-4 col-sm-6">
+                <Link className="btn btn-primary mb-3 me-md-2 rounded-2" to="/signin">
+                  <span className="hide-menu text-white">Log In</span>
+                </Link>
+                <Link className="btn btn-primary mb-3 rounded-2" to="/registration">
+                  <span className="hide-menu text-white">Register</span>
+                </Link>
+              </div>
             </div>
             <div>
               <table className="table table-striped table-responsive">

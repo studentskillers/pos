@@ -3,8 +3,6 @@ import { useState,useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // using for routing
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import HomePage from './pages/homePage';
-import ContactPage from './pages/contactPage';
 import Dashboard from './pages/dashboard';
 import AddCustomer from './pages/addCustomer';
 import ManageCustomer from './pages/manageCustomer';
@@ -34,9 +32,7 @@ function App() {
   return (
     <BrowserRouter>
        <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path='/dashboard' element={<Dashboard/>} />
+        <Route path='/' element={<Dashboard/>} />
         <Route path='/addcustomer' element={<AddCustomer/>} />
         <Route path='/addcategory' element={<AddCategory/>} />        
         <Route path='/addproduct' element={<AddProduct/>} />        

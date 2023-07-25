@@ -64,8 +64,8 @@ function ManageCustomer() {
                 <h2>Manage Customer</h2>
               </div>
               <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
-                  <Link className="btn btn-primary rounded" to="/addcustomer">
-                    <span className="hide-menu">Add Customer</span>
+                  <Link className="btn btn-primary mb-3 rounded-2" to="/addcustomer">
+                    <span className="hide-menu text-white">Add Customer</span>
                   </Link>
               </div>
             </div>
