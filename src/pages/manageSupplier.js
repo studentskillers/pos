@@ -3,8 +3,11 @@ import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
 import { firestore } from "../config/firestore";
-import {getDocs,collection} from "@firebase/firestore"
-
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {doc,addDoc,getDocs,updateDoc,deleteDoc,collection} from "@firebase/firestore"
+import { Button,Modal,Row,Col,Container } from "react-bootstrap";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   DatatableWrapper,
   Filter,
@@ -13,8 +16,6 @@ import {
   TableBody,
   TableHeader
 } from 'react-bs-datatable';
-import { Col, Row, Table } from 'react-bootstrap';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const header = [
@@ -23,19 +24,53 @@ const header = [
   { title: 'Location', prop: 'location' }
 ];
 
-
 function ManageSupplier() {
-  const[supplierList,setSupplierlist]=useState();
+  const db=collection(firestore,"supplier_master");
+  const[supplierList,setSupplierList]=useState();
+  const[editSupplier,setEditSupplier]=useState("");
+  const[editSupplierId,setEditSupplierId]=useState("");
+  const[open,setOpen]=useState(false);
 
   useEffect(()=>{
     getSupplier()
   },[])
 
   async function getSupplier(){
-    const ref=collection(firestore,"supplier_master");
-    const supList=await getDocs(ref);
-    setSupplierlist(supList.docs.map(doc=>doc.data()));
+    const supData=await getDocs(db);
+    const editSup=supData.docs.map((doc)=>({id:doc.id,...doc.data()}));
+    setSupplierList(editSup);
+    console.log(editSup)
   }
+
+  const handleEditSupplier=(editData)=>{
+    console.log(editData)
+    setEditSupplier(editData.Name)
+    setEditSupplierId(editData.id)
+    setOpen(true);
+    }
+
+    const handleUpdateSupplier=(e)=>{
+      e.preventDefault();
+      if(editSupplier!==""){
+        console.log(editSupplier,editSupplierId)
+        const Ref=doc(db,editSupplierId)
+        updateDoc(Ref,{
+          Name:editSupplier
+        });
+        setEditSupplier("");
+        setEditSupplierId("");
+        setOpen(false);
+        getSupplier();
+      }
+    }
+  
+    const handleDeleteSupplier=(deleteDataId)=>{
+      console.log(deleteDataId);
+      deleteDoc(doc(db,deleteDataId));
+      getSupplier();
+      }
+
+
   return (
     <>
       <div
@@ -78,14 +113,17 @@ function ManageSupplier() {
                   </tr>
                 </thead>
                 <tbody>
-                  {supplierList?.map(function (data,index) {
+                {supplierList?.map(function (data,index) {
                     return <>
-                      <tr>
+                      <tr key={data.index}>
                         <td>{data.Name}</td>
                         <td>{data.Phoneno}</td>
                         <td>{data.Email}</td>
                         <td>{data.Address}</td>
-                        <td>Edit/Delete</td>
+                        <td>
+                        <button className="button-edit" onClick={() => handleEditSupplier(data)}> <EditIcon id="i" /> </button>
+                        <button className="button-delete" onClick={() => handleDeleteSupplier(data.id)}><DeleteIcon Id="i" /> </button>
+                        </td>
                       </tr>
                     </>
                   })}
@@ -95,6 +133,27 @@ function ManageSupplier() {
           </div>
         </div>
       </div>
+      <Modal show ={open} onHide={()=>{setOpen(false)}} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Supplier</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={handleUpdateSupplier}>
+            <div className="input-container">
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                value={editSupplier}
+                onChange={(e)=>setEditSupplier(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <button className="btn btn-primary">Update Supplier</button>
+             </div>
+            </div>
+          </form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }

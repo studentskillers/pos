@@ -11,7 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 // https://firebase.google.com/docs/firestore/manage-data/add-data
 // https://firebase.google.com/docs/firestore/manage-data/delete-data
 function Dashboard() {
-    const db = collection(firestore, "todos");
+    const db = collection(firestore, "todos"); 
     const [addSubject, setAddSubject] = useState("");
     const [editSubject, setEditSubject] = useState("");
     const [editSubjectId, setEditSubjectId] = useState("");
@@ -126,6 +126,7 @@ function Dashboard() {
                                             return <>
                                                 <tr key={data.index}>
                                                     <td>{data.Subject}</td>
+                                                    <td>{data.Subject1}</td>
                                                     <td>
                                                         <button className="button-edit" onClick={() => handleEdit(data)}> <EditIcon id="i" /> </button>
                                                         <button className="button-delete" onClick={() => handleDelete(data.id)}>

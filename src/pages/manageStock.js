@@ -3,8 +3,11 @@ import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
 import { firestore } from "../config/firestore";
-import {addDoc,getDocs,collection} from "@firebase/firestore"
-
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {doc,addDoc,getDocs,updateDoc,deleteDoc,collection} from "@firebase/firestore"
+import { Button,Modal,Row,Col,Container } from "react-bootstrap";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   DatatableWrapper,
   Filter,
@@ -13,8 +16,6 @@ import {
   TableBody,
   TableHeader
 } from 'react-bs-datatable';
-import { Col, Row, Table } from 'react-bootstrap';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const header = [
@@ -25,18 +26,53 @@ const header = [
 
 
 function ManageStock() {
+  const db=collection(firestore,"stock_master");
   const[stockList,setStocklist]=useState();
+  const[editStock,setEditStock]=useState("");
+  const[editStockId,setEditStockId]=useState("");
+  const[open,setOpen]=useState(false);
+
 
   useEffect(()=>{
     getStock()
   },[])
 
   async function getStock(){
-    const ref=collection(firestore,"stock_master");
-    const stkList=await getDocs(ref);
-    setStocklist(stkList.docs.map(doc=>doc.data()));
-    console.log(stkList);
+    const stkData=await getDocs(db);
+    const editStk=stkData.docs.map((doc)=>({id:doc.id,...doc.data()}));
+    setStocklist(editStk);
+    console.log(editStk);
   }
+
+  const handleEditStock=(editData)=>{
+    console.log(editData)
+    setEditStock(editData.Product)
+    setEditStockId(editData.id)
+    setOpen(true);
+    }
+
+    const handleUpdateStock=(e)=>{
+      e.preventDefault();
+      if(editStock!==""){
+        console.log(editStock,editStockId)
+        const Ref=doc(db,editStockId)
+        updateDoc(Ref,{
+          Product:editStock
+        });
+        setEditStock("");
+        setEditStockId("");
+        setOpen(false);
+        getStock();
+      }
+    }
+
+    const handleDeleteStock=(deleteDataId)=>{
+      console.log(deleteDataId);
+      deleteDoc(doc(db,deleteDataId));
+      getStock();
+      }
+
+
   return (
     <>
       <div
@@ -81,12 +117,15 @@ function ManageStock() {
                 <tbody>
                   {stockList?.map(function (data,index) {
                     return <>
-                      <tr>
+                      <tr key={data.index}>
                         <td>{data.Product}</td>
                         <td>{data.CurrentStock}</td>
                         <td>{data.SupplierName}</td>
                         <td>{data.AddQty}</td>
-                        <td>Edit/Delete</td>
+                        <td>
+                        <button className="button-edit" onClick={() => handleEditStock(data)}> <EditIcon id="i" /> </button>
+                        <button className="button-delete" onClick={() => handleDeleteStock(data.id)}><DeleteIcon Id="i" /> </button>
+                        </td>
                       </tr>
                     </>
                   })}
@@ -96,6 +135,27 @@ function ManageStock() {
           </div>
         </div>
       </div>
+      <Modal show ={open} onHide={()=>{setOpen(false)}} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Stock</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={handleUpdateStock}>
+            <div className="input-container">
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                value={editStock}
+                onChange={(e)=>setEditStock(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <button className="btn btn-primary">Update Stock</button>
+             </div>
+            </div>
+          </form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }

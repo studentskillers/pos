@@ -7,12 +7,12 @@ import { firestore } from "../config/firestore";
 
 function AddCategory() {
     
-    const ref=collection(firestore,"category_master");
+    const db=collection(firestore,"category_master");
 
     const handleSubmit=(values)=>{
         try{
             if(values!=""&&values!=undefined){
-                addDoc(ref,values)
+                addDoc(db,values)
                 alert("added successfully")
             }else{
               alert("enter valid data");

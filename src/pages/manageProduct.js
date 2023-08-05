@@ -3,8 +3,11 @@ import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
 import { firestore } from "../config/firestore";
-import {getDocs,collection} from "@firebase/firestore"
-
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {doc,addDoc,getDocs,updateDoc,deleteDoc,collection} from "@firebase/firestore"
+import { Button,Modal,Row,Col,Container } from "react-bootstrap";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   DatatableWrapper,
   Filter,
@@ -13,8 +16,6 @@ import {
   TableBody,
   TableHeader
 } from 'react-bs-datatable';
-import { Col, Row, Table } from 'react-bootstrap';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const header = [
@@ -25,17 +26,49 @@ const header = [
 
 
 function ManageProduct() {
+  const db=collection(firestore,"product_master");
   const[productList,setProductList]=useState();
+  const[editProduct,setEditProduct]=useState("");
+  const[editProductId,setEditProductId]=useState("");
+  const[open,setOpen]=useState(false);
 
   useEffect(()=>{
     getProduct()
   },[])
 
   async function getProduct(){
-    const ref=collection(firestore,"product_master");
-    const prdList=await getDocs(ref);
-    setProductList(prdList.docs.map(doc=>doc.data()));
-    console.log(prdList);
+    const prdData=await getDocs(db);
+    const editPrd=prdData.docs.map((doc)=>({id:doc.id,...doc.data()}));
+    setProductList(editPrd);
+    console.log(editPrd);
+  }
+
+  const handleEditProduct=(editData)=>{
+  console.log(editData)
+  setEditProduct(editData.ProductName)
+  setEditProductId(editData.id)
+  setOpen(true);
+  }
+
+  const handleUpdateProduct=(e)=>{
+    e.preventDefault();
+    if(editProduct!==""){
+      console.log(editProduct,editProductId)
+      const Ref=doc(db,editProductId)
+      updateDoc(Ref,{
+        ProductName:editProduct
+      });
+      setEditProduct("");
+      setEditProductId("");
+      setOpen(false);
+      getProduct();
+    }
+  }
+
+  const handleDeleteProduct=(deleteDataId)=>{
+  console.log(deleteDataId);
+  deleteDoc(doc(db,deleteDataId));
+  getProduct();
   }
   return (
     <>
@@ -85,7 +118,7 @@ function ManageProduct() {
                 <tbody>
                   {productList?.map(function (data,index) {
                     return <>
-                      <tr>
+                      <tr key={data.index}>
                         <td>{data.ProductName}</td>
                         <td>{data.SKU}</td>
                         <td>{data.Category}</td>
@@ -94,7 +127,10 @@ function ManageProduct() {
                         <td>{data.ReorderQty}</td>
                         <td>{data.CostPrice}</td>
                          <td>{data.SellingPrice}</td>
-                        <td>Edit/Delete</td>
+                        <td>
+                        <button className="button-edit" onClick={() => handleEditProduct(data)}> <EditIcon id="i" /> </button>
+                        <button className="button-delete" onClick={() => handleDeleteProduct(data.id)}><DeleteIcon Id="i" /> </button>
+                        </td>
                       </tr>
                     </>
                   })}
@@ -104,6 +140,27 @@ function ManageProduct() {
           </div>
         </div>
       </div>
+      <Modal show ={open} onHide={()=>{setOpen(false)}} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={handleUpdateProduct}>
+            <div className="input-container">
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                value={editProduct}
+                onChange={(e)=>setEditProduct(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <button className="btn btn-primary">Update Product </button>
+             </div>
+            </div>
+          </form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }
