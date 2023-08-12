@@ -1,6 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { Outlet, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function SideMenu() {
 
@@ -79,14 +78,6 @@ function SideMenu() {
                 </Link>
             </li>
 
-            <li className="sidebar-item">
-                <Link className="sidebar-link" to="/editcustomer">
-                    <span>
-                    <i className="ti ti-layout-dashboard"></i>
-                    </span>
-                    <span className="hide-menu">Edit Customer</span>
-                </Link>
-            </li>
 
             <li className="sidebar-item">
                 <Link className="sidebar-link" to="/managecustomer">

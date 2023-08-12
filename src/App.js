@@ -1,11 +1,9 @@
 import React from 'react';
-import { useState,useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // using for routing
 import "bootstrap/dist/css/bootstrap.min.css";
 import Dashboard from './pages/dashboard';
 import AddCustomer from './pages/addCustomer';
 import ManageCustomer from './pages/manageCustomer';
-import EditCustomer from './pages/editCustomer';
 import SignIn from './pages/signIn';
 import RegistrationPage from './pages/registrationPage';
 import ManageUser from './pages/manageUser';
@@ -35,8 +33,7 @@ function App() {
         <Route path='/addproduct' element={<AddProduct/>} />  
         <Route path='/addsupplier' element={<AddSupplier/>}/> 
         <Route path='/addstock' element={<AddStock/>} />     
-        <Route path='/managecustomer' element={<ManageCustomer/>} />
-        <Route path='/editcustomer' element={<EditCustomer/>} />       
+        <Route path='/managecustomer' element={<ManageCustomer/>} />  
         <Route path='/managecategory' element={<ManageCategory/>} /> 
         <Route path='/manageproduct' element={<ManageProduct/>} />
         <Route path='/managesupplier' element={<ManageSupplier/>}/>
