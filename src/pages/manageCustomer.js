@@ -19,7 +19,7 @@ function ManageCustomer() {
   const [open, setOpen] = useState(false);
   const [customerList, setCustomerList] = useState();
   const [initialLoad, setInitialLoad] = useState(true);
-
+  
   const handleOpen = () => {
     setOpen(true);
   };

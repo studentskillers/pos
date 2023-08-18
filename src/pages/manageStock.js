@@ -17,7 +17,7 @@ import {
   TableHeader
 } from 'react-bs-datatable';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { Link } from "react-router-dom";
 const header = [
   { title: 'Username', prop: 'username' },
   { title: 'Name', prop: 'realname' },
@@ -28,7 +28,10 @@ const header = [
 function ManageStock() {
   const db=collection(firestore,"stock_master");
   const[stockList,setStocklist]=useState();
-  const[editStock,setEditStock]=useState("");
+  const[editProduct,setEditProduct]=useState("");
+  const[editCurrentStock,setEditCurrentStock]=useState("");
+  const[editSupplierName,setEditSupplierName]=useState("");
+  const[editAddQty,setEditAddQty]=useState("");
   const[editStockId,setEditStockId]=useState("");
   const[open,setOpen]=useState(false);
 
@@ -46,20 +49,26 @@ function ManageStock() {
 
   const handleEditStock=(editData)=>{
     console.log(editData)
-    setEditStock(editData.Product)
+    setEditProduct(editData.Product)
     setEditStockId(editData.id)
     setOpen(true);
     }
 
     const handleUpdateStock=(e)=>{
       e.preventDefault();
-      if(editStock!==""){
-        console.log(editStock,editStockId)
+      if(editProduct!==""){
+        console.log(editProduct,editStockId)
         const Ref=doc(db,editStockId)
         updateDoc(Ref,{
-          Product:editStock
+          Product:editProduct,
+          CurrentStock:editCurrentStock,
+          SupplierName:editSupplierName,
+          AddQty:editAddQty
         });
-        setEditStock("");
+        setEditProduct("");
+        setEditCurrentStock("");
+        setEditSupplierName("");
+        setEditAddQty("");
         setEditStockId("");
         setOpen(false);
         getStock();
@@ -92,15 +101,12 @@ function ManageStock() {
           <div className="container-fluid">
             <div className="row">
               <div className="col-xxl-10 col-xl-10 col-md-10 col-sm-8">
-                <h2>Manage Product</h2>
+                <h2>Manage Stock</h2>
               </div>
               <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
-                <button
-                  class="btn btn-primary  mb-3 rounded-2"
-                  type="button"
-                >
-                  Add Product
-                </button>
+                <Link className="btn btn-primary mb-3 rounded-2" to="/addstock">
+                    <span className="hide-menu text-white">Add Stock </span>
+                </Link>
               </div>
             </div>
             <div>
@@ -111,20 +117,21 @@ function ManageStock() {
                     <th>Current Stock</th>
                     <th>Supplier Name </th>
                     <th>Add Qty</th>
-                    <th>Action</th>
+                    <th>Action</th> 
                   </tr>
                 </thead>
                 <tbody>
                   {stockList?.map(function (data,index) {
-                    return <>
+                    return 
+                    <>
                       <tr key={data.index}>
                         <td>{data.Product}</td>
                         <td>{data.CurrentStock}</td>
                         <td>{data.SupplierName}</td>
                         <td>{data.AddQty}</td>
                         <td>
-                        <button className="button-edit" onClick={() => handleEditStock(data)}> <EditIcon id="i" /> </button>
-                        <button className="button-delete" onClick={() => handleDeleteStock(data.id)}><DeleteIcon Id="i" /> </button>
+                         <button className="button-edit" onClick={() => handleEditStock(data)}> <EditIcon id="i" /> </button>
+                         <button className="button-delete" onClick={() => handleDeleteStock(data.id)}><DeleteIcon Id="i" /> </button>
                         </td>
                       </tr>
                     </>
@@ -145,8 +152,33 @@ function ManageStock() {
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                 <input type="text"
                 className="form-control"
-                value={editStock}
-                onChange={(e)=>setEditStock(e.target.value)}
+                placeholder="product"
+                value={editProduct}
+                onChange={(e)=>setEditProduct(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">    
+                <input type="text"
+                className="form-control"
+                placeholder="CurrentStock"
+                value={editCurrentStock}
+                onChange={(e)=>setEditCurrentStock(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="suppliername"
+                value={editSupplierName}
+                onChange={(e)=>setEditSupplierName(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="AddQty"
+                value={editAddQty}
+                onChange={(e)=>setEditAddQty(e.target.value)}
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">

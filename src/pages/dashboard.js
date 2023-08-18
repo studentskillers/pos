@@ -126,7 +126,6 @@ function Dashboard() {
                                             return <>
                                                 <tr key={data.index}>
                                                     <td>{data.Subject}</td>
-                                                    <td>{data.Subject1}</td>
                                                     <td>
                                                         <button className="button-edit" onClick={() => handleEdit(data)}> <EditIcon id="i" /> </button>
                                                         <button className="button-delete" onClick={() => handleDelete(data.id)}>

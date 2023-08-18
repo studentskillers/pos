@@ -17,6 +17,7 @@ import {
   TableHeader
 } from 'react-bs-datatable';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from "react-router-dom";
 
 const header = [
   { title: 'Username', prop: 'username' },
@@ -28,7 +29,14 @@ const header = [
 function ManageProduct() {
   const db=collection(firestore,"product_master");
   const[productList,setProductList]=useState();
+  const[editcategory,setEditCategory]=useState("");
   const[editProduct,setEditProduct]=useState("");
+  const[editSKU,setEditSKU]=useState("");
+  const[editDescription,setEditDescription]=useState("");
+  const[editStockQty,setEditStockQty]=useState("");
+  const[editReorderQty,setEditReorderQty]=useState("");
+  const[editCostPrice,setEditCostPrice]=useState("");
+  const[editSellingPrice,setEditSellingPrice]=useState("");
   const[editProductId,setEditProductId]=useState("");
   const[open,setOpen]=useState(false);
 
@@ -45,7 +53,7 @@ function ManageProduct() {
 
   const handleEditProduct=(editData)=>{
   console.log(editData)
-  setEditProduct(editData.ProductName)
+  setEditProduct(editData.Category)
   setEditProductId(editData.id)
   setOpen(true);
   }
@@ -56,9 +64,23 @@ function ManageProduct() {
       console.log(editProduct,editProductId)
       const Ref=doc(db,editProductId)
       updateDoc(Ref,{
-        ProductName:editProduct
+        category:editcategory,
+        ProductName:editProduct,
+        SKU:editSKU,
+        Description:editDescription,
+        StockQty:editStockQty,
+        ReorderQty:editReorderQty,
+        CostPrice:editCostPrice,
+        SellingPrice:editSellingPrice
       });
+      setEditCategory("");
       setEditProduct("");
+      setEditSKU("");
+      setEditDescription("");
+      setEditStockQty("");
+      setEditReorderQty("");
+      setEditCostPrice("");
+      setEditSellingPrice("");
       setEditProductId("");
       setOpen(false);
       getProduct();
@@ -92,21 +114,18 @@ function ManageProduct() {
                 <h2>Manage Product</h2>
               </div>
               <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
-                <button
-                  class="btn btn-primary  mb-3 rounded-2"
-                  type="button"
-                >
-                  Add Product
-                </button>
+                <Link className="btn btn-primary mb-3 rounded-2" to="/addproduct">
+                    <span className="hide-menu text-white">Add Product</span>
+                </Link>
               </div>
             </div>
             <div>
               <table className="table table-striped table-responsive">
                 <thead>
                   <tr>
+                    <th>Category</th>
                     <th>Product Name </th>
                     <th>SKU</th>
-                    <th>Category</th>
                     <th>Description </th>
                     <th>Stock Qty</th>
                     <th>Reorder Qty</th>
@@ -119,9 +138,9 @@ function ManageProduct() {
                   {productList?.map(function (data,index) {
                     return <>
                       <tr key={data.index}>
+                        <td>{data.Category}</td>
                         <td>{data.ProductName}</td>
                         <td>{data.SKU}</td>
-                        <td>{data.Category}</td>
                         <td>{data.Description}</td>
                         <td>{data.StockQty}</td>
                         <td>{data.ReorderQty}</td>
@@ -150,8 +169,65 @@ function ManageProduct() {
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                 <input type="text"
                 className="form-control"
+                placeholder="category"
+                value={editcategory}
+                onChange={(e)=>setEditCategory(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="ProductName"
                 value={editProduct}
                 onChange={(e)=>setEditProduct(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="Sku"
+                value={editSKU}
+                onChange={(e)=>setEditSKU(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="Description"
+                value={editDescription}
+                onChange={(e)=>setEditDescription(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="stockQty"
+                value={editStockQty}
+                onChange={(e)=>setEditStockQty(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="reorderQty"
+                value={editReorderQty}
+                onChange={(e)=>setEditReorderQty(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="costprice"
+                value={editCostPrice}
+                onChange={(e)=>setEditCostPrice(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                placeholder="sellingPrice"
+                value={editSellingPrice}
+                onChange={(e)=>setEditSellingPrice(e.target.value)}
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">

@@ -17,7 +17,8 @@ import {
   TableHeader
 } from 'react-bs-datatable';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { Link } from "react-router-dom";
+import { Phone } from "@mui/icons-material";
 const header = [
   { title: 'Username', prop: 'username' },
   { title: 'Name', prop: 'realname' },
@@ -27,7 +28,10 @@ const header = [
 function ManageSupplier() {
   const db=collection(firestore,"supplier_master");
   const[supplierList,setSupplierList]=useState();
-  const[editSupplier,setEditSupplier]=useState("");
+  const[editSupplierName,setEditSupplierName]=useState("");
+  const[editSupplierPhoneno,setEditSupplierPhoneno]=useState("");
+  const[editSupplierEmail,setEditSupplierEmail]=useState("");
+  const[editSupplierAddress,setEditSupplierAddress]=useState("");
   const[editSupplierId,setEditSupplierId]=useState("");
   const[open,setOpen]=useState(false);
 
@@ -44,20 +48,26 @@ function ManageSupplier() {
 
   const handleEditSupplier=(editData)=>{
     console.log(editData)
-    setEditSupplier(editData.Name)
+    setEditSupplierName(editData.Name)
     setEditSupplierId(editData.id)
     setOpen(true);
     }
 
     const handleUpdateSupplier=(e)=>{
       e.preventDefault();
-      if(editSupplier!==""){
-        console.log(editSupplier,editSupplierId)
+      if(editSupplierName!==""){
+        console.log(editSupplierName,editSupplierId)
         const Ref=doc(db,editSupplierId)
         updateDoc(Ref,{
-          Name:editSupplier
+          Name:editSupplierName,
+          Phoneno:editSupplierPhoneno,
+          Email:editSupplierEmail,
+          Address:editSupplierAddress
         });
-        setEditSupplier("");
+        setEditSupplierName("");
+        setEditSupplierPhoneno("");
+        setEditSupplierEmail("");
+        setEditSupplierAddress("");
         setEditSupplierId("");
         setOpen(false);
         getSupplier();
@@ -93,12 +103,9 @@ function ManageSupplier() {
                 <h2>Manage Supplier</h2>
               </div>
               <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
-                <button
-                  class="btn btn-primary  mb-3 rounded-2"
-                  type="button"
-                >
-                  Add Supplier
-                </button>
+                <Link className="btn btn-primary mb-3 rounded-2" to="/addsupplier">
+                    <span className="hide-menu text-white">Add Supplier</span>
+                </Link>
               </div>
             </div>
             <div>
@@ -143,8 +150,33 @@ function ManageSupplier() {
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                 <input type="text"
                 className="form-control"
-                value={editSupplier}
-                onChange={(e)=>setEditSupplier(e.target.value)}
+                value={editSupplierName}
+                placeholder="Name"
+                onChange={(e)=>setEditSupplierName(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="Number"
+                className="form-control"
+                value={editSupplierPhoneno}
+                placeholder="PhoneNO"
+                onChange={(e)=>setEditSupplierPhoneno(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="email"
+                className="form-control"
+                value={editSupplierEmail}
+                placeholder="Email"
+                onChange={(e)=>setEditSupplierEmail(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                className="form-control"
+                value={editSupplierAddress}
+                placeholder="Address"
+                onChange={(e)=>setEditSupplierAddress(e.target.value)}
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">

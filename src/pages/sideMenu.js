@@ -44,38 +44,38 @@ function SideMenu() {
 
 
             <li className="sidebar-item">
-                <Link className="sidebar-link" to="/addcategory">
+                <Link className="sidebar-link" to="/editcategory">
                     <span>
                     <i className="ti ti-layout-dashboard"></i>
                     </span>
-                    <span className="hide-menu">Add Category</span>
+                    <span className="hide-menu">Edit Category</span>
                 </Link>
             </li>
 
             <li className="sidebar-item">
-                <Link className="sidebar-link" to="/addproduct">
+                <Link className="sidebar-link" to="/editproduct">
                     <span>
                     <i className="ti ti-layout-dashboard"></i>
                     </span>
-                    <span className="hide-menu">Add Product</span>
+                    <span className="hide-menu">Edit Product</span>
                 </Link>
             </li>
             
             <li className="sidebar-item">
-                <Link className="sidebar-link" to="/addsupplier">
+                <Link className="sidebar-link" to="/editsupplier">
                     <span>
                         <i className="ti ti-layout-dashboard"></i>
                     </span>
-                    <span className="hide-menu">Add Supplier</span>
+                    <span className="hide-menu">Edit Supplier</span>
                 </Link>
             </li>
 
             <li className="sidebar-item">
-                <Link className="sidebar-link" to="/addstock">
+                <Link className="sidebar-link" to="/editstock">
                     <span>
                     <i className="ti ti-layout-dashboard"></i>
                     </span>
-                    <span className="hide-menu">Add stock</span>
+                    <span className="hide-menu">Edit stock</span>
                 </Link>
             </li>
 

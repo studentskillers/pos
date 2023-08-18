@@ -17,6 +17,7 @@ import {
   TableHeader
 } from 'react-bs-datatable';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from "react-router-dom";
 
 const header = [
   { title: 'Username', prop: 'username' },
@@ -29,6 +30,7 @@ function ManageCategory() {
   const db = collection(firestore, "category_master");
   const [categoryList, setCategorylist] = useState();
   const [editCategory, setEditcategory] = useState("");
+  const [editCategoryCode,setEditcategoryCode]=useState("");
   const [editCategoryId, setEditcategoryId] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -58,9 +60,11 @@ function ManageCategory() {
       console.log(editCategory,editCategoryId)
       const Ref = doc(db, editCategoryId);
       updateDoc(Ref, {
-        CategoryName: editCategory
+        CategoryName: editCategory, 
+        CategoryCode:editCategoryCode
        });
-      setEditcategory("");
+      setEditcategory(""); 
+      setEditcategoryCode("");
       setEditcategoryId("");
       setOpen(false);
       getCategory();
@@ -94,12 +98,9 @@ function ManageCategory() {
                 <h2>Manage Category</h2>
               </div>
               <div className="d-grid gap-2 d-md-flex justify-content-md-end col-xxl-2 col-xl-2 col-md-2 col-sm-4">
-                <button
-                  class="btn btn-primary  mb-3 rounded-2"
-                  type="button"
-                >
-                  Add Category
-                </button>
+                  <Link className="btn btn-primary mb-3 rounded-2" to="/addcategory">
+                    <span className="hide-menu text-white">Add Category</span>
+                  </Link>
               </div>
             </div>
             <div>
@@ -142,8 +143,17 @@ function ManageCategory() {
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                 <input type="text"
                   className="form-control"
+                  placeholder="Category Name"
                   value={editCategory}
                   onChange={(e) => setEditcategory(e.target.value)}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                <input type="text"
+                  className="form-control"
+                  placeholder="Category Code"
+                  value={editCategoryCode}
+                  onChange={(e) => setEditcategoryCode(e.target.value)}
                 />
               </div>
                <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
