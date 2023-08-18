@@ -13,6 +13,8 @@ function PointOnSales() {
   const time = moment().format("MMMM Do dddd YYYY");
   const [curTime, setCurTime] = useState("");
   const ref = collection(firestore, "customer_master");
+  const codeRef = collection(firestore, "category_master");
+  const [categoryCode, setCategoryCode] = useState();
   const [customerList, setCustomerList] = useState();
   const [proList, setProlist] = useState([]);
   const [open, setOpen] = useState(false);
@@ -98,12 +100,19 @@ function PointOnSales() {
 
   useEffect(() => {
     getCustomer();
+    getCategoryCode();
   }, []);
 
   async function getCustomer() {
     const cusList = await getDocs(ref);
     setCustomerList(cusList.docs.map((doc) => doc.data()));
     console.log(customerList);
+  }
+
+  async function getCategoryCode() {
+    const codeList = await getDocs(codeRef);
+    setCategoryCode(codeList.docs.map((doc) => doc.data()));
+    console.log(categoryCode);
   }
 
   return (
@@ -127,24 +136,12 @@ function PointOnSales() {
               {/* Products Content Page Start */}
               <div className="col-8">
                 <div className="row mb-2">
-                  <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Category 1</a>
+                {categoryCode?.map(function (data, index) {
+                    return (
+                  <div className="col-2 ml-1 mt-2" key={index}>
+                    <a className="btn btn-primary align-self-center">{data.CategoryCode}</a>
                   </div>
-                  <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Category 2</a>
-                  </div>
-                  <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Category 3</a>
-                  </div>
-                  <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Category 4</a>
-                  </div>
-                  <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Category 5</a>
-                  </div>
-                  <div className="col-2 ml-1 mt-2">
-                    <a className="btn btn-primary">Category 6</a>
-                  </div>
+                  )})}
                 </div>
                 <div className="row">
                   {proList.map(function (list, index) {

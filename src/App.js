@@ -1,5 +1,4 @@
 import React from 'react';
-import { useState,useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // using for routing
 import "bootstrap/dist/css/bootstrap.min.css";
 import Dashboard from './pages/dashboard';
@@ -45,6 +44,7 @@ function App() {
         <Route path='/editproduct' element={<EditProduct/>} />    
         <Route path='/editstock' element={<EditStock/>} />              
         <Route path='/editsupplier' element={<EditSupplier/>} />                        
+        <Route path='/managecustomer' element={<ManageCustomer/>} />  
         <Route path='/managecategory' element={<ManageCategory/>} /> 
         <Route path='/manageproduct' element={<ManageProduct/>} />
         <Route path='/managesupplier' element={<ManageSupplier/>}/>
