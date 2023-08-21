@@ -31,7 +31,7 @@ function ManageCustomer() {
   };
   const [editCustomerId, setEditCustomerId] = useState();
   const [formCustomer, setFormCustomer] = useState({
-    fullname: "",
+    fullname: "", 
     phoneno: "",
     email: "",
     address: "",

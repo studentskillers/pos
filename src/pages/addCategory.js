@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
-import {addDoc,getDocs,collection} from "@firebase/firestore";
+import { addDoc, collection } from "@firebase/firestore";
 import { firestore } from "../config/firestore";
 
 function AddCategory() {
@@ -121,7 +121,7 @@ function AddCategory() {
                                                                     className="btn btn-success  mb-4 rounded-2"
                                                                     type="reset"
                                                                 >
-                                                                    Reset
+                                                                    Reset 
                                                                 </button>
                                                             </div>
                                                             <div className="col-xxl-1 col-xl-1 col-md-1 col-sm-5">
@@ -142,7 +142,6 @@ function AddCategory() {
                     </div>
                 </div>
             </div>
-
         </>
     )
 };

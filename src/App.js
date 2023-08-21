@@ -5,7 +5,6 @@ import Dashboard from './pages/dashboard';
 import AddCustomer from './pages/addCustomer';
 import ManageCustomer from './pages/manageCustomer';
 import EditCategory from './pages/editCategory';
-import EditCustomer from './pages/editCustomer';
 import EditProduct from './pages/editProduct';
 import EditStock from './pages/editStock';
 import EditSupplier from './pages/editSupplier';
@@ -40,7 +39,6 @@ function App() {
         <Route path='/addstock' element={<AddStock/>} />     
         <Route path='/managecustomer' element={<ManageCustomer/>} />
         <Route path='/editcategory' element={<EditCategory/>} />       
-        <Route path='/editcustomer' element={<EditCustomer/>} />
         <Route path='/editproduct' element={<EditProduct/>} />    
         <Route path='/editstock' element={<EditStock/>} />              
         <Route path='/editsupplier' element={<EditSupplier/>} />                        
