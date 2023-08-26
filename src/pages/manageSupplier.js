@@ -1,83 +1,110 @@
 import React, { useState,useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
-import { Formik } from "formik";
 import { firestore } from "../config/firestore";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import {doc,addDoc,getDocs,updateDoc,deleteDoc,collection} from "@firebase/firestore"
-import { Button,Modal,Row,Col,Container } from "react-bootstrap";
+import {
+  doc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  collection
+} from "@firebase/firestore"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Modal} from "react-bootstrap";
+import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  DatatableWrapper,
-  Filter,
-  Pagination,
-  PaginationOpts,
-  TableBody,
-  TableHeader
-} from 'react-bs-datatable';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from "react-router-dom";
-import { Phone } from "@mui/icons-material";
-const header = [
-  { title: 'Username', prop: 'username' },
-  { title: 'Name', prop: 'realname' },
-  { title: 'Location', prop: 'location' }
-];
+import Swal from "sweetalert2"
 
 function ManageSupplier() {
-  const db=collection(firestore,"supplier_master");
+  const ref=collection(firestore,"supplier_master");
   const[supplierList,setSupplierList]=useState();
-  const[editSupplierName,setEditSupplierName]=useState("");
-  const[editSupplierPhoneno,setEditSupplierPhoneno]=useState("");
-  const[editSupplierEmail,setEditSupplierEmail]=useState("");
-  const[editSupplierAddress,setEditSupplierAddress]=useState("");
+  const[initialLoad,setInitialLoad]=useState(true);
+
+  const handleOpen=()=>{
+    setOpen(true)
+  }
+
+  const handleClose=()=>{
+    setOpen(false)
+  }
+
   const[editSupplierId,setEditSupplierId]=useState("");
-  const[open,setOpen]=useState(false);
+const[formSupplier,setFormSupplier]=useState({
+  Name:"",
+  Phoneno:"",
+  Email:"",
+  Address:""
+})
+ const[open,setOpen]=useState(false);
+
 
   useEffect(()=>{
     getSupplier()
   },[])
 
   async function getSupplier(){
-    const supData=await getDocs(db);
-    const editSup=supData.docs.map((doc)=>({id:doc.id,...doc.data()}));
-    setSupplierList(editSup);
-    console.log(editSup)
+    const supList=await getDocs(ref);
+    setSupplierList(supList.docs.map((doc)=>({id:doc.id,...doc.data()})));
+    console.log(supList)
   }
 
-  const handleEditSupplier=(editData)=>{
-    console.log(editData)
-    setEditSupplierName(editData.Name)
-    setEditSupplierId(editData.id)
+  const handleEditSupplier=(editSup)=>{
+    console.log(editSup)
+    setFormSupplier(editSup.Name,editSup.Phoneno,editSup.Email,editSup.Address)
+    setEditSupplierId(editSup.id)
     setOpen(true);
+    getSupplier()
     }
 
     const handleUpdateSupplier=(e)=>{
       e.preventDefault();
-      if(editSupplierName!==""){
-        console.log(editSupplierName,editSupplierId)
-        const Ref=doc(db,editSupplierId)
-        updateDoc(Ref,{
-          Name:editSupplierName,
-          Phoneno:editSupplierPhoneno,
-          Email:editSupplierEmail,
-          Address:editSupplierAddress
+      if(
+        formSupplier.Name &&
+        formSupplier.Phoneno &&
+        formSupplier.Email &&
+        formSupplier.Address !==""
+        ){
+        console.log(formSupplier,editSupplierId)
+        const db=doc(ref,editSupplierId)
+        updateDoc(db,{
+          Name:formSupplier.Name,
+          Phoneno:formSupplier.Phoneno,
+          Email:formSupplier.Email,
+          Address:formSupplier.Address
         });
-        setEditSupplierName("");
-        setEditSupplierPhoneno("");
-        setEditSupplierEmail("");
-        setEditSupplierAddress("");
+        setFormSupplier("");
         setEditSupplierId("");
         setOpen(false);
         getSupplier();
+      }
+      else{
+        Swal.fire(
+          "Don't leave empty field",
+          'Could you please provide a valid data',
+          'question'
+        )
       }
     }
   
     const handleDeleteSupplier=(deleteDataId)=>{
       console.log(deleteDataId);
-      deleteDoc(doc(db,deleteDataId));
-      getSupplier();
+      Swal.fire({
+        title: "Are you sure to delete the category?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Delete",
+        denyButtonText: "Don't Delete",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteDoc(doc(ref, deleteDataId))
+          Swal.fire("Deleted!", "", "success");
+          getSupplier();
+          console.log("Deleted")
+        } else if (result.isDenied) {
+          Swal.fire("Changes not deleted", "", "info");
+        }
+      })
       }
 
 
@@ -121,15 +148,19 @@ function ManageSupplier() {
                 </thead>
                 <tbody>
                 {supplierList?.map(function (data,index) {
-                    return <>
+                    return<>
                       <tr key={data.index}>
                         <td>{data.Name}</td>
                         <td>{data.Phoneno}</td>
                         <td>{data.Email}</td>
                         <td>{data.Address}</td>
                         <td>
-                        <button className="button-edit" onClick={() => handleEditSupplier(data)}> <EditIcon id="i" /> </button>
-                        <button className="button-delete" onClick={() => handleDeleteSupplier(data.id)}><DeleteIcon Id="i" /> </button>
+                        <button className="button-edit" onClick={() => handleEditSupplier(data)}> 
+                         <EditIcon id="i" /> 
+                        </button>
+                        <button className="button-delete" onClick={() => handleDeleteSupplier(data.id)}>
+                          <DeleteIcon Id="i" /> 
+                        </button>
                         </td>
                       </tr>
                     </>
@@ -140,43 +171,88 @@ function ManageSupplier() {
           </div>
         </div>
       </div>
-      <Modal show ={open} onHide={()=>{setOpen(false)}} centered>
+      <Modal 
+      show ={open} 
+      onHide={()=>{
+        setOpen(false)
+        }} 
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>Edit Supplier</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={handleUpdateSupplier}>
-            <div className="input-container">
+            <div className="input-container row">
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="ProductName" className="form-label">
+                  Name
+                </label>
                 <input type="text"
                 className="form-control"
-                value={editSupplierName}
-                placeholder="Name"
-                onChange={(e)=>setEditSupplierName(e.target.value)}
+                id="Name"
+                name="Name"
+                value={formSupplier.Name}
+                placeholder="Enter the Supplier Name"
+                onChange={(e)=>
+                  setFormSupplier((prevSupplier)=>({
+                    ...prevSupplier,
+                    Name: e.target.value
+                  }))
+                }
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="Phoneno" className="form-label">
+                  Phone NO
+                </label>
                 <input type="Number"
                 className="form-control"
-                value={editSupplierPhoneno}
-                placeholder="PhoneNO"
-                onChange={(e)=>setEditSupplierPhoneno(e.target.value)}
+                id="Phoneno"
+                name="Phoneno"
+                value={formSupplier.Phoneno}
+                placeholder="Enter Suppliers PhoneNO"
+                onChange={(e)=>
+                  setFormSupplier((prevSupplier)=>({
+                    ...prevSupplier,
+                    Phoneno: e.target.value
+                  }))
+                }
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="Email" className="form-label">
+                  Email
+                </label>
                 <input type="email"
                 className="form-control"
-                value={editSupplierEmail}
-                placeholder="Email"
-                onChange={(e)=>setEditSupplierEmail(e.target.value)}
+                id="Email"
+                name="Email"
+                value={formSupplier.Email}
+                placeholder="Enter the Email"
+                onChange={(e)=>
+                  setFormSupplier((prevSupplier)=>({
+                    ...prevSupplier,
+                    Email:e.target.value
+                  }))
+                }
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="Address" className="form-label">
+                  Address
+                </label>
                 <input type="text"
                 className="form-control"
-                value={editSupplierAddress}
-                placeholder="Address"
-                onChange={(e)=>setEditSupplierAddress(e.target.value)}
+                id="Address"
+                name="Address"
+                value={formSupplier.Address}
+                placeholder="Enetr the Address"
+                onChange={(e)=>
+                  setFormSupplier((prevSupplier)=>({
+                    ...prevSupplier,
+                    Address:e.target.value
+                  }))}
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
