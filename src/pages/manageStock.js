@@ -1,84 +1,109 @@
 import React, { useState,useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
-import { Formik } from "formik";
 import { firestore } from "../config/firestore";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import {doc,addDoc,getDocs,updateDoc,deleteDoc,collection} from "@firebase/firestore"
-import { Button,Modal,Row,Col,Container } from "react-bootstrap";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  DatatableWrapper,
-  Filter,
-  Pagination,
-  PaginationOpts,
-  TableBody,
-  TableHeader
-} from 'react-bs-datatable';
+  doc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  collection
+} from "@firebase/firestore"
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Modal} from "react-bootstrap";
 import { Link } from "react-router-dom";
-const header = [
-  { title: 'Username', prop: 'username' },
-  { title: 'Name', prop: 'realname' },
-  { title: 'Location', prop: 'location' }
-];
-
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
+import Swal from "sweetalert2"
 
 function ManageStock() {
-  const db=collection(firestore,"stock_master");
+  const ref=collection(firestore,"stock_master");
   const[stockList,setStocklist]=useState();
-  const[editProduct,setEditProduct]=useState("");
-  const[editCurrentStock,setEditCurrentStock]=useState("");
-  const[editSupplierName,setEditSupplierName]=useState("");
-  const[editAddQty,setEditAddQty]=useState("");
-  const[editStockId,setEditStockId]=useState("");
-  const[open,setOpen]=useState(false);
+  const[initialLoad,setInitialLoad]=useState(true);
 
+  const handleOpen=()=>{
+    setOpen(true)
+  }
+
+  const handleClose=()=>{
+    setOpen(false)
+  }
+
+const[editStockId,setEditStockId]=useState();
+const[formStock,setFormStock]=useState({
+  Product:"",
+  CurrentStock:"",
+  SupplierName:"",
+  AddQty:"",
+});
+ const[open,setOpen]=useState(false);
 
   useEffect(()=>{
     getStock()
   },[])
 
   async function getStock(){
-    const stkData=await getDocs(db);
-    const editStk=stkData.docs.map((doc)=>({id:doc.id,...doc.data()}));
-    setStocklist(editStk);
-    console.log(editStk);
+    const stkList=await getDocs(ref);
+    setStocklist(stkList.docs.map((doc)=>({id:doc.id,...doc.data()})));
+    console.log(stockList);
   }
 
-  const handleEditStock=(editData)=>{
-    console.log(editData)
-    setEditProduct(editData.Product)
-    setEditStockId(editData.id)
+  const handleEditStock=(editStk)=>{
+    console.log(editStk)
+    setFormStock(editStk.Product,editStk.CurrentStock,editStk.SupplierName,editStk.AddQty)
+    setEditStockId(editStk.id)
     setOpen(true);
+    getStock();
     }
 
     const handleUpdateStock=(e)=>{
       e.preventDefault();
-      if(editProduct!==""){
-        console.log(editProduct,editStockId)
-        const Ref=doc(db,editStockId)
-        updateDoc(Ref,{
-          Product:editProduct,
-          CurrentStock:editCurrentStock,
-          SupplierName:editSupplierName,
-          AddQty:editAddQty
+      if(
+        formStock.Product &&
+        formStock.CurrentStock &&
+        formStock.SupplierName &&
+        formStock.AddQty !==""
+      ) {
+        console.log(formStock,editStockId)
+        const db=doc(ref,editStockId)
+        updateDoc(db,{
+          Product:formStock.Product,
+          CurrentStock:formStock.CurrentStock,
+          SupplierName:formStock.SupplierName,
+          AddQty:formStock.AddQty
         });
-        setEditProduct("");
-        setEditCurrentStock("");
-        setEditSupplierName("");
-        setEditAddQty("");
+        setFormStock("");
         setEditStockId("");
         setOpen(false);
         getStock();
+      }
+      else{
+        Swal.fire(
+          "Don't leave empty field",
+          'Could you please provide a valid data',
+          'question'
+        )
       }
     }
 
     const handleDeleteStock=(deleteDataId)=>{
       console.log(deleteDataId);
-      deleteDoc(doc(db,deleteDataId));
-      getStock();
+      Swal.fire({
+        title: "Are you sure to delete the category?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Delete",
+        denyButtonText: "Don't Delete",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteDoc(doc(ref, deleteDataId))
+          Swal.fire("Deleted!", "", "success");
+          getStock();
+          console.log("Deleted")
+        } else if (result.isDenied) {
+          Swal.fire("Changes not deleted", "", "info");
+        }
+      })
       }
 
 
@@ -122,16 +147,19 @@ function ManageStock() {
                 </thead>
                 <tbody>
                   {stockList?.map(function (data,index) {
-                    return 
-                    <>
+                    return<>
                       <tr key={data.index}>
                         <td>{data.Product}</td>
                         <td>{data.CurrentStock}</td>
                         <td>{data.SupplierName}</td>
                         <td>{data.AddQty}</td>
                         <td>
-                         <button className="button-edit" onClick={() => handleEditStock(data)}> <EditIcon id="i" /> </button>
-                         <button className="button-delete" onClick={() => handleDeleteStock(data.id)}><DeleteIcon Id="i" /> </button>
+                         <button className="button-edit" onClick={() => handleEditStock(data)}> 
+                          <EditIcon id="i" /> 
+                         </button>
+                         <button className="button-delete" onClick={() => handleDeleteStock(data.id)}>
+                          <DeleteIcon Id="i" /> 
+                         </button>
                         </td>
                       </tr>
                     </>
@@ -142,43 +170,86 @@ function ManageStock() {
           </div>
         </div>
       </div>
-      <Modal show ={open} onHide={()=>{setOpen(false)}} centered>
+      <Modal 
+      show ={open} 
+      onHide={()=>{
+        setOpen(false)
+      }} 
+        centered
+        >
         <Modal.Header closeButton>
           <Modal.Title>Edit Stock</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={handleUpdateStock}>
-            <div className="input-container">
+            <div className="input-container row">
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="ProductName" className="form-label">
+                  Product
+                </label>
                 <input type="text"
                 className="form-control"
-                placeholder="product"
-                value={editProduct}
-                onChange={(e)=>setEditProduct(e.target.value)}
-                />
-              </div>
-              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">    
-                <input type="text"
-                className="form-control"
-                placeholder="CurrentStock"
-                value={editCurrentStock}
-                onChange={(e)=>setEditCurrentStock(e.target.value)}
-                />
-              </div>
-              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
-                <input type="text"
-                className="form-control"
-                placeholder="suppliername"
-                value={editSupplierName}
-                onChange={(e)=>setEditSupplierName(e.target.value)}
+                id="Product"
+                name="Product"
+                placeholder="Enter the Product"
+                value={formStock.Product}
+                onChange={(e)=>
+                  setFormStock((prevStock)=>({
+                    ...prevStock,
+                    Product:e.target.value
+                  }))
+                }
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="CurrentStock" className="form-label">
+                  Current Stock
+                </label>    
                 <input type="text"
                 className="form-control"
-                placeholder="AddQty"
-                value={editAddQty}
-                onChange={(e)=>setEditAddQty(e.target.value)}
+                placeholder="Enter the CurrentStock"
+                value={formStock.CurrentStock}
+                onChange={(e)=>
+                  setFormStock((prevStock)=>({
+                    ...prevStock,
+                    CurrentStock:e.currentTarget.value
+                  }))}
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="SupplierName" className="form-label">
+                  Supplier Name
+                </label>
+                <input type="text"
+                className="form-control"
+                id="SupplierName"
+                name="SupplierName"
+                placeholder="Enter the AddQty"
+                value={formStock.SupplierName}
+                onChange={(e)=>
+                  setFormStock((prevStock)=>({
+                    ...prevStock,
+                    SupplierName:e.target.value
+                  }))
+                }
+                />
+              </div>
+              <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+              <label htmlFor="AddQty" className="form-label">
+                  Add Qty
+                </label>
+                <input type="text"
+                className="form-control"
+                id="AddQty"
+                name="AddQty"
+                placeholder="Enter the AddQty"
+                value={formStock.AddQty}
+                onChange={(e)=>
+                  setFormStock((prevStock)=>({
+                    ...prevStock,
+                    AddQty:e.target.value
+                  }))
+                }
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">

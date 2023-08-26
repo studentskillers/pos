@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { Formik } from "formik";
-import { addDoc, getDocs, collection } from "@firebase/firestore";
+import { addDoc,getDocs,collection } from "@firebase/firestore";
 import { firestore } from "../config/firestore";
 
 
@@ -16,7 +16,7 @@ function AddStock() {
     async function getProduct() {
         const ref = collection(firestore, "product_master");
         const prdList = await getDocs(ref);
-        setProductList(prdList.docs.map(doc => doc.data()));
+        setProductList(prdList.docs.map((doc) => doc.data()));
         console.log(prdList);
     }
 
@@ -30,11 +30,12 @@ function AddStock() {
   async function getSupplier(){
     const ref=collection(firestore,"supplier_master");
     const supList=await getDocs(ref);
-    setSupplierlist(supList.docs.map(doc=>doc.data()));
+    setSupplierlist(supList.docs.map((doc)=>doc.data()));
   }
 
 
     const ref = collection(firestore, "stock_master");
+
     const handleSubmit = (values) => {
         try {
             if (values !== "" && values !== undefined) {
@@ -93,7 +94,8 @@ function AddStock() {
                                         return errors;
                                     }}
                                     onSubmit={(values, { setSubmitting }) => {
-                                        handleSubmit(values)
+                                        console.log(values);
+                                        handleSubmit(values);
                                     }}
                                 >
                                     {({
@@ -222,8 +224,8 @@ function AddStock() {
                                                             </button>
                                                         </div>
                                                         <div className="col-xxl-1 col-xl-1 col-md-1 col-sm-5">
-                                                            <button class="btn btn-primary  mb-4 rounded-2" type="cancel" >
-                                                                CANCEL
+                                                            <button class="btn btn-primary  mb-4 rounded-2" type="submit" >
+                                                                SUBMIT
                                                             </button>
                                                         </div>
                                                         <div className="col-xxl-5 col-xl-5 col-md-5 col-sm-1">
