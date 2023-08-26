@@ -6,6 +6,9 @@ import { Formik } from "formik";
 import axios from "axios";
 import { firestore } from "../config/firestore";
 import { addDoc, collection } from "@firebase/firestore";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Fab } from "@mui/material";
+import { Link } from "react-router-dom";
 
 function AddCustomer() {
   //function calling la doubts iruku! values,name,onchange la doubts iruku
@@ -35,21 +38,21 @@ function AddCustomer() {
     });
   }, [formData.country]);
 
-  const handleCountryCity=(e)=>{
-    const {name,value}=e.currentTarget;
-    setFormData((prevFormData)=>({
+  const handleCountryCity = (e) => {
+    const { name, value } = e.currentTarget;
+    setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]: value
+      [name]: value,
     }));
     //console.log(formData);
-  }
+  };
 
   const handleClick = (values) => {
     console.log("Submit button clicked");
     try {
-      if (values && Object.keys(formData).length !== 0){
-        console.log(values,formData);
-        addDoc(ref, {...values, ...formData});
+      if (values && Object.keys(formData).length !== 0) {
+        console.log(values, formData);
+        addDoc(ref, { ...values, ...formData });
         alert("added successfully");
       } else {
         alert("error");
@@ -76,9 +79,19 @@ function AddCustomer() {
         <div className="body-wrapper">
           <TopBar></TopBar>
           <div className="container-fluid">
+            <Fab
+              size="medium"
+              color="primary"
+              aria-label="back"
+              className="mb-2"
+            >
+              <Link className="rounded-2" to="/manageCustomer">
+                <ArrowBackIcon className="text-white" />
+              </Link>
+            </Fab>
             <div className="card">
               <div className="card-body">
-                <h2 className="card-title text-center mb-3">Add customer</h2>
+                <h3 className=" text-center mb-3">Add customer</h3>
                 <Formik
                   initialValues={{
                     fullname: "",
@@ -143,9 +156,11 @@ function AddCustomer() {
                                 onBlur={handleBlur}
                                 value={values.fullname}
                               />
-                              {errors.fullname &&
-                                touched.fullname &&
-                                errors.fullname}
+                              <span className="text-danger">
+                                {errors.fullname &&
+                                  touched.fullname &&
+                                  errors.fullname}
+                              </span>
                             </div>
 
                             <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
@@ -164,9 +179,11 @@ function AddCustomer() {
                                 onBlur={handleBlur}
                                 value={values.phoneno}
                               />
-                              {errors.phoneno &&
-                                touched.phoneno &&
-                                errors.phoneno}
+                              <span className="text-danger">
+                                {errors.phoneno &&
+                                  touched.phoneno &&
+                                  errors.phoneno}
+                              </span>
                             </div>
                           </div>
                           <div className="row">
@@ -187,7 +204,9 @@ function AddCustomer() {
                                 onBlur={handleBlur}
                                 value={values.email}
                               />
-                              {errors.email && touched.email && errors.email}
+                              <span className="text-danger">
+                                {errors.email && touched.email && errors.email}
+                              </span>
                             </div>
 
                             <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
@@ -205,11 +224,12 @@ function AddCustomer() {
                                 onBlur={handleBlur}
                                 value={values.address}
                                 placeholder="Enter the current address"
-                              >
+                              />
+                              <span className="text-danger">
                                 {errors.address &&
                                   touched.address &&
                                   errors.address}
-                              </textarea>
+                              </span>
                             </div>
                           </div>
                           <div className="row">
@@ -230,6 +250,9 @@ function AddCustomer() {
                                 value={formData.country}
                                 required
                               >
+                                <option>
+                                  Select Country...
+                                </option>
                                 {countryList?.map(function (
                                   countryData,
                                   index
@@ -282,7 +305,10 @@ function AddCustomer() {
                           <div className="row">
                             <div className="col-xxl-5 col-xl-5 col-md-5 col-sm-1"></div>
                             <div className="col-xxl-1 col-xl-1 col-md-1 col-sm-5">
-                              <button className="btn btn-success  mb-4 rounded-2" type="reset">
+                              <button
+                                className="btn btn-success  mb-4 rounded-2"
+                                type="reset"
+                              >
                                 Reset
                               </button>
                             </div>

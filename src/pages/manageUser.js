@@ -2,8 +2,11 @@ import React, { useState,useEffect } from "react";
 import SideMenu from "./sideMenu";
 import TopBar from "./topBar";
 import { firestore } from "../config/firestore";
-import { getDocs, collection } from "@firebase/firestore";
+import { doc, deleteDoc, updateDoc, getDocs, collection } from "@firebase/firestore";
 import { Link } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import Swal from "sweetalert2";
 
 function ManageUser() {
 
@@ -16,9 +19,25 @@ function ManageUser() {
 
   async function getUser() {
     const uList=await getDocs(ref);
-    setUserList(uList.docs.map(doc => doc.data()));
+    setUserList(uList.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     console.log(userList);
   }
+
+  const handleDelete=(delDataId)=>{
+    console.log(delDataId);
+    Swal.fire({
+      title: "Are you sure to delete the user details?",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteDoc(doc(ref, delDataId));
+        Swal.fire("Deleted!", "", "success");
+        getUser();
+        console.log("deleted");
+      }
+    });
+  };
 
   return (
     <>
@@ -46,7 +65,7 @@ function ManageUser() {
                   <span className="hide-menu text-white">Log In</span>
                 </Link>
                 <Link className="btn btn-primary mb-3 rounded-2" to="/registration">
-                  <span className="hide-menu text-white">Register</span>
+                  <span className="hide-menu text-white">Add User</span>
                 </Link>
               </div>
             </div>
@@ -57,18 +76,25 @@ function ManageUser() {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Password</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {userList?.map(function (data,index) {
                     return (
-                      <>
                         <tr key={index}>
                           <td>{data.name}</td>
                           <td>{data.email}</td>
-                          <td>{data.password}</td>
+                          <td>********</td>
+                          <td>
+                            <span>
+                              <EditIcon fontSize="medium" id="i" />
+                            </span>
+                            <span onClick={() => handleDelete(data.id)}>
+                              <DeleteOutlineIcon fontSize="medium" id="i" />
+                            </span>
+                          </td>
                         </tr>
-                      </>
                     );
                   })}
                 </tbody>

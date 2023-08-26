@@ -23,48 +23,49 @@ function PointOnSales() {
   const productList = [
     {
       id: 1,
-      title: "Product 1",
-      price: 200,
+      title: "Rolex",
+      price: 2000,
     },
     {
       id: 2,
-      title: "Product 2",
-      price: 300,
+      title: "Harley",
+      price: 30000,
     },
     {
       id: 3,
-      title: "Product 3",
-      price: 400,
+      title: "BMW",
+      price: 40000,
     },
     {
       id: 4,
-      title: "Product 4",
-      price: 500,
+      title: "Bracelet",
+      price: 400,
     },
     {
       id: 5,
-      title: "Product 5",
+      title: "Chain",
       price: 600,
     },
     {
       id: 6,
-      title: "Product 6",
-      price: 700,
+      title: "Tomato",
+      price: 100,
     },
     {
       id: 7,
-      title: "Product 7",
-      price: 800,
+      title: "Potato",
+      price: 70,
     },
     {
       id: 8,
-      title: "Product 8",
-      price: 900,
+      title: "Carrot",
+      price: 50,
     },
   ];
 
   useEffect(() => {
     setProlist(productList);
+    setInitialLoad(false);
   }, []);
 
   // const showtime = () => {
@@ -83,25 +84,37 @@ function PointOnSales() {
     setOpen(false);
   };
 
-  useEffect(() => {
-    setInitialLoad(false);
-  }, []);
 
-  const cartFun = (id, title, price, quantity) => {
-    var cartObj = {
-      productId: id,
-      title: title,
-      price: price,
-      quantity: 1,
-    };
-    setCartArr(cartObj);
-    // console.log(cartArr);
+ 
+
+  const cartFun = (id, title, price) => {
+    const existingIndex = cartArr.findIndex((item) => item.productId === id);
+  
+    if (existingIndex !== -1) {
+      // Product already exists, update its quantity
+      const updatedCartArr = [...cartArr];
+      updatedCartArr[existingIndex].quantity += 1;
+  
+      setCartArr(updatedCartArr);
+    } else {
+      // Product doesn't exist, add it to the cart
+      const cartObj = {
+        productId: id,
+        title: title,
+        price: price,
+        quantity: 1,
+      };
+      setCartArr((prevCartArr) => [...prevCartArr, cartObj]);
+    }
   };
 
-  useEffect(() => {
-    getCustomer();
-    getCategoryCode();
-  }, []);
+  const calculateTotal = () => {
+    let total = 0;
+    for (const item of cartArr) {
+      total += item.price * item.quantity;
+    }
+    return total;
+  };
 
   async function getCustomer() {
     const cusList = await getDocs(ref);
@@ -114,6 +127,12 @@ function PointOnSales() {
     setCategoryCode(codeList.docs.map((doc) => doc.data()));
     console.log(categoryCode);
   }
+
+  useEffect(() => {
+    getCustomer();
+    getCategoryCode();
+    setCustomerList();
+  }, []);
 
   return (
     <>
@@ -139,7 +158,7 @@ function PointOnSales() {
                 {categoryCode?.map(function (data, index) {
                     return (
                   <div className="col-2 ml-1 mt-2" key={index}>
-                    <a className="btn btn-primary align-self-center">{data.CategoryCode}</a>
+                    <a className="btn btn-primary align-self-center">{data.CategoryName}</a>
                   </div>
                   )})}
                 </div>
@@ -234,8 +253,12 @@ function PointOnSales() {
                             <tr key={index}>
                               <td>{data.title}</td>
                               <td>{data.price}</td>
-                              <td>{data.quantity}</td>
-                              <td>{data.price}</td>
+                              <td>
+                                -
+                                 {data.quantity} 
+                                +
+                              </td>
+                              <td>{data.price * data.quantity}</td>
                             </tr>
                           );
                         })}
@@ -268,8 +291,8 @@ function PointOnSales() {
                           -----------------------------------------
                         </h5>
                         <div className="row">
-                          <h5 className="card-text text-dark col-10">Total</h5>
-                          <h5 className="text-end col-2">$4</h5>
+                          <h5 className="card-text text-dark col-7">Total</h5>
+                          <h5 className="text-end col-5">${calculateTotal()}</h5>
                         </div>
                       </div>
                       <div className="card-header"></div>

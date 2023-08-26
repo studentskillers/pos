@@ -89,18 +89,14 @@ function ManageCustomer() {
     console.log(delDataId);
     Swal.fire({
       title: "Are you sure to delete the customer details?",
-      showDenyButton: true,
       showCancelButton: true,
       confirmButtonText: "Delete",
-      denyButtonText: `Don't Delete`,
     }).then((result) => {
       if (result.isConfirmed) {
         deleteDoc(doc(ref, delDataId));
         Swal.fire("Deleted!", "", "success");
         getCustomer();
         console.log("deleted");
-      } else if (result.isDenied) {
-        Swal.fire("Changes are not deleted", "", "info");
       }
     });
   };
@@ -209,6 +205,7 @@ function ManageCustomer() {
                       fullname: e.target.value,
                     }))
                   }
+                  required
                 />
               </div>
               <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12 mb-3">

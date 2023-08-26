@@ -98,7 +98,7 @@ function Dashboard() {
                         <div className="card-body">
                             <h5 className="card-title fw-semibold mb-4">Today Planner</h5>
                             <form onSubmit={handleAddTodo}>
-                                <div className="input-container">
+                                <div className="input-container row">
                                     <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
                                         <input type="text" className="form-control"
                                             placeholder='what do you want to do?'
@@ -106,7 +106,7 @@ function Dashboard() {
                                             onChange={(e) => setAddSubject(e.target.value)}
                                         />
                                     </div>
-                                    <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+                                    <div className="col-xxl-6 col-xl-6 col-md-6 col-sm-12 ml-3">
                                         <button className='btn btn-primary'>Add-Todo</button>
                                     </div>
                                 </div>

@@ -52,7 +52,7 @@ function RegistrationPage() {
                         alt=""
                       />
                     </a>
-                    <p class="text-center">Sign Up</p>
+                    <p class="text-center">Sign In</p>
                     <Formik
                       initialValues={{
                         name: "",
@@ -85,7 +85,7 @@ function RegistrationPage() {
                         return errors;
                       }}
                       onSubmit={(values, { setSubmitting }) => {
-                        alert(JSON.stringify(values));
+                        console.log(JSON.stringify(values));
                         handleClick(values);
                         setSubmitting(false);
                       }}
@@ -115,7 +115,9 @@ function RegistrationPage() {
                                 onBlur={handleBlur}
                                 value={values.name}
                               />
+                              <span className="text-danger">                                
                               {errors.name && touched.name && errors.name}
+                              </span>
                             </div>
                             <div class="mb-3">
                               <label
@@ -134,7 +136,9 @@ function RegistrationPage() {
                                 onBlur={handleBlur}
                                 value={values.email}
                               />
+                              <span className="text-danger">
                               {errors.email && touched.email && errors.email}
+                              </span>
                             </div>
                             <div class="mb-4">
                               <label
@@ -152,7 +156,9 @@ function RegistrationPage() {
                                 onBlur={handleBlur}
                                 value={values.password}
                               />
+                              <span className="text-danger">
                               {errors.password && touched.password && errors.password}
+                              </span>
                             </div>
                             <div class="mb-4">
                               <label
@@ -170,7 +176,9 @@ function RegistrationPage() {
                                 onBlur={handleBlur}
                                 value={values.confirmpassword}
                               />
+                              <span className="text-danger">
                               {errors.confirmpassword && touched.confirmpassword && errors.confirmpassword}
+                              </span>
                             </div>
                             <div className="row">
                               <div className="col-xxl-2 col-xl-2 col-md-2 col-sm-1"></div>
