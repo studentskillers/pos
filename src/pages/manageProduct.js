@@ -261,7 +261,7 @@ function ManageProduct() {
                   className="form-control"
                   id="StockQty"
                   name="StockQty"
-                  placeholder="enter the StockQty"
+                  placeholder="Enter the StockQty"
                   value={formProduct.StockQty}
                   onChange={(e) => 
                     setFormProduct((prevProduct)=>({
