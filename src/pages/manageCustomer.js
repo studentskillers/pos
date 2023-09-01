@@ -31,11 +31,15 @@ function ManageCustomer() {
   };
   const [editCustomerId, setEditCustomerId] = useState();
   const [formCustomer, setFormCustomer] = useState({
+    id:"",
     fullname: "", 
     phoneno: "",
     email: "",
     address: "",
   });
+
+
+
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -50,8 +54,17 @@ function ManageCustomer() {
 
   const handleEdit = (editCus) => {
     console.log(editCus);
-    setFormCustomer(editCus.fullname, editCus.phoneno);
+    // setFormCustomer(editCus.fullname, editCus.phoneno);
     setEditCustomerId(editCus.id);
+
+    setFormCustomer({
+      id:editCus.id,
+      fullname: editCus.fullname, 
+      phoneno: editCus.phoneno,
+      email: editCus.email,
+      address: editCus.address,
+
+    })
     setOpen(true);
   };
 
