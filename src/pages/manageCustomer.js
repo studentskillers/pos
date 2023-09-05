@@ -15,30 +15,20 @@ import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import Swal from "sweetalert2";
+import MUIDataTable from "mui-datatables";
 import { Modal } from "react-bootstrap";
 
 function ManageCustomer() {
   const ref = collection(firestore, "customer_master");
   const [customerList, setCustomerList] = useState();
-  const [initialLoad, setInitialLoad] = useState(true);
-  
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
   const [editCustomerId, setEditCustomerId] = useState();
   const [formCustomer, setFormCustomer] = useState({
-    id:"",
-    fullname: "", 
+    id: "",
+    fullname: "",
     phoneno: "",
     email: "",
     address: "",
   });
-
-
 
   const [open, setOpen] = useState(false);
 
@@ -58,13 +48,12 @@ function ManageCustomer() {
     setEditCustomerId(editCus.id);
 
     setFormCustomer({
-      id:editCus.id,
-      fullname: editCus.fullname, 
+      id: editCus.id,
+      fullname: editCus.fullname,
       phoneno: editCus.phoneno,
       email: editCus.email,
       address: editCus.address,
-
-    })
+    });
     setOpen(true);
   };
 
@@ -88,13 +77,12 @@ function ManageCustomer() {
       setEditCustomerId("");
       setOpen(false);
       getCustomer();
-    }
-    else{
+    } else {
       Swal.fire(
         "Don't leave empty fields",
-        'Could you please provide a valid data',
-        'question'
-      )
+        "Could you please provide a valid data",
+        "question"
+      );
     }
   };
 
@@ -112,6 +100,61 @@ function ManageCustomer() {
         console.log("deleted");
       }
     });
+  };
+
+  const columns = [
+    {
+      name: "fullname",
+      label: "Name",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "phoneno",
+      label: "Phone No",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "email",
+      label: "Email",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "address",
+      label: "Address",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "country",
+      label: "Country",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "city",
+      label: "City",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+  ];
+
+  const options = {
+    filterType: "checkbox",
   };
 
   return (
@@ -184,6 +227,12 @@ function ManageCustomer() {
                   })}
                 </tbody>
               </table>
+              <MUIDataTable
+                title={"Manage Customer"}
+                data={customerList}
+                columns={columns}
+                options={options}
+              />
             </div>
           </div>
         </div>
