@@ -2,19 +2,36 @@ import React from "react";
 import { Formik } from "formik";
 import { firestore } from "../config/firestore";
 import { addDoc, collection } from "@firebase/firestore";
-
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { NavLink, useNavigate } from 'react-router-dom'
 
 function RegistrationPage() {
-
+  const navigate = useNavigate(); //using for navigate 
   const ref=collection(firestore,"user_master");
-
-  
+  const auth = getAuth();
 
   const handleClick=(values)=>{
     try{
       if(values!==0){
-        addDoc(ref,values);
-        alert("submitted");
+
+        createUserWithEmailAndPassword(auth, values.email, values.password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          console.log("user--->",user.uid);
+          values.uid=user.uid;
+          addDoc(ref,values); //store data in user_master collection in firebase
+          navigate("/signin") //redirect to login page
+          alert("submitted");
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ..
+        });
+
+        
       }else{
         alert("error");
       }
@@ -28,7 +45,7 @@ function RegistrationPage() {
   return (
     <>
       <div
-        class="page-wrapper"
+        className="page-wrapper"
         id="main-wrapper"
         data-layout="vertical"
         data-navbarbg="skin6"
@@ -36,15 +53,15 @@ function RegistrationPage() {
         data-sidebar-position="fixed"
         data-header-position="fixed"
       >
-        <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
-          <div class="d-flex align-items-center justify-content-center w-100">
-            <div class="row justify-content-center w-100">
-              <div class="col-md-8 col-lg-6 col-xxl-3">
-                <div class="card mb-0">
-                  <div class="card-body">
+        <div className="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+          <div className="d-flex align-items-center justify-content-center w-100">
+            <div className="row justify-content-center w-100">
+              <div className="col-md-8 col-lg-6 col-xxl-3">
+                <div className="card mb-0">
+                  <div className="card-body">
                     <a
                       href="/"
-                      class="text-nowrap logo-img text-center d-block py-3 w-100"
+                      className="text-nowrap logo-img text-center d-block py-3 w-100"
                     >
                       <img
                         src="../assets/images/logos/dark-logo.svg"
@@ -52,7 +69,7 @@ function RegistrationPage() {
                         alt=""
                       />
                     </a>
-                    <p class="text-center">Sign In</p>
+                    <p className="text-center">Sign In</p>
                     <Formik
                       initialValues={{
                         name: "",
@@ -101,13 +118,13 @@ function RegistrationPage() {
                       }) => {
                         return (
                           <form onSubmit={handleSubmit}>
-                            <div class="mb-3">
-                              <label for="exampleInputtext1" class="form-label">
+                            <div className="mb-3">
+                              <label for="exampleInputtext1" className="form-label">
                                 Name
                               </label>
                               <input
                                 type="text"
-                                class="form-control"
+                                className="form-control"
                                 id="exampleInputtext1"
                                 aria-describedby="textHelp"
                                 name="name"
@@ -119,10 +136,10 @@ function RegistrationPage() {
                               {errors.name && touched.name && errors.name}
                               </span>
                             </div>
-                            <div class="mb-3">
+                            <div className="mb-3">
                               <label
                                 for="exampleInputEmail1"
-                                class="form-label"
+                                className="form-label"
                               >
                                 Email Address
                               </label>
@@ -140,16 +157,16 @@ function RegistrationPage() {
                               {errors.email && touched.email && errors.email}
                               </span>
                             </div>
-                            <div class="mb-4">
+                            <div className="mb-4">
                               <label
                                 for="exampleInputPassword1"
-                                class="form-label"
+                                className="form-label"
                               >
                                 Password
                               </label>
                               <input
                                 type="password"
-                                class="form-control"
+                                className="form-control"
                                 id="exampleInputPassword1"
                                 name="password"
                                 onChange={handleChange}
@@ -160,16 +177,16 @@ function RegistrationPage() {
                               {errors.password && touched.password && errors.password}
                               </span>
                             </div>
-                            <div class="mb-4">
+                            <div className="mb-4">
                               <label
                                 for="exampleInputPassword1"
-                                class="form-label"
+                                className="form-label"
                               >
                                 Confirm Password
                               </label>
                               <input
                                 type="password"
-                                class="form-control"
+                                className="form-control"
                                 id="exampleInputPassword1"
                                 name="confirmpassword"
                                 onChange={handleChange}
@@ -193,7 +210,7 @@ function RegistrationPage() {
                               </div>
                               <div className="col-xxl-4 col-xl-4 col-md-4 col-sm-5">
                                 <button
-                                  class="btn btn-primary  mb-4 rounded-2"
+                                  className="btn btn-primary  mb-4 rounded-2"
                                   type="button"
                                 >
                                   Cancel

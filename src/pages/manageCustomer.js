@@ -116,7 +116,7 @@ function ManageCustomer() {
       label: "Phone No",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {

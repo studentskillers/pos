@@ -1,8 +1,25 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { useEffect } from 'react';
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 function SideMenu() {
+    const navigate = useNavigate(); //using for navigate 
 
+    useEffect(() => {
+        const uid=sessionStorage.getItem("uid");
+        const accessToken=sessionStorage.getItem("accessToken");
+        console.log("uid--->",uid);
+        if((uid =="" || uid==undefined||uid==null )){
+            navigate("/signin")
+        }
+    }, [])
+
+    const LogoutApp=()=>{
+        console.log("LogoutApp in Sidemenu");
+        sessionStorage.clear();
+        navigate("/signin");
+    }
+    
     return(
         <>
         {/* // <!-- Sidebar Start --> */}
@@ -130,6 +147,13 @@ function SideMenu() {
                     </span>
                     <span className="hide-menu">Point On Sales</span>
                 </Link>
+            </li>
+            <li onClick={LogoutApp}>
+                <span>
+                    <i className="ti ti-layout-dashboard"></i>
+                </span>
+                <span className="hide-menu">Logout</span>
+                
             </li>
 
           </ul>

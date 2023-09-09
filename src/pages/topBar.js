@@ -1,7 +1,13 @@
 import React from 'react';
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 function TopBar() {
-
+  const navigate = useNavigate(); //using for navigate 
+    const LogoutApp=()=>{
+      console.log("LogoutApp");
+      // sessionStorage.clear();
+      // navigate("/signin");
+    }
     return(
         <>
          {/* <!--  Header Start --> */}
@@ -37,7 +43,7 @@ function TopBar() {
                     <i className="ti ti-list-check fs-6"></i>
                     <p className="mb-0 fs-3">My Task</p>
                   </span>
-                  <span className="btn btn-outline-primary mx-3 mt-2 d-block">Logout</span>
+                  <span className="btn btn-outline-primary mx-3 mt-2 d-block" onClick={LogoutApp()}>Logout</span>
                 </div>
               </div>
             </li>

@@ -1,7 +1,43 @@
 import React from "react";
 import { Formik } from "formik";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { NavLink, useNavigate } from 'react-router-dom'
 
 function SignIn() {
+  const auth = getAuth();
+  const navigate = useNavigate(); //using for navigate 
+
+  const login=(formData)=>{
+
+    signInWithEmailAndPassword(auth, formData.email, formData.password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      if(user.uid){
+        console.log("user-->",user);
+        sessionStorage.setItem("uid",user.uid); //set uid in session storage
+        sessionStorage.setItem("accessToken",user.accessToken); //set accessToken in session storage
+        
+        navigate("/")
+      }else{
+        alert("enter valid emailid and password");
+      }
+      
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // console.log(error)
+      if(error){
+        alert("enter valid emailid and password"); 
+        console.log(error)
+      }
+      
+    });
+
+  }
+
 
   return (
     <>
@@ -50,7 +86,8 @@ function SignIn() {
                           }
                       }}
                       onSubmit={(values, { setSubmitting }) => {
-                        alert(JSON.stringify(values));
+                        // alert(JSON.stringify(values));
+                        login(values)
                         setSubmitting(false);
                       }}
                     >
@@ -124,13 +161,18 @@ function SignIn() {
                                 Forgot Password ?
                               </a>
                             </div>
-                            <a
-                              href="/"
-                              className="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2"
-                              disabled={isSubmitting}
-                            >
-                              Sign In
-                            </a>
+                           
+
+                            <div className="col-xxl-12 col-xl-12 col-md-12 col-sm-12">
+                                <button
+                                  className="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2"
+                                  type="submit"
+                                  disabled={isSubmitting}
+                                >
+                                   Sign In
+                                </button>
+                              </div>
+
                           </form>
                         );
                       }}
